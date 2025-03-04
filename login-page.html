@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js" crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: radial-gradient(circle farthest-corner at 10% 20%, rgba(178,0,184,1) 0%, rgba(71,0,159,1) 90%);
+        }
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .login-container img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: none;
+            border-bottom: 2px solid white;
+            background: transparent;
+            color: white;
+            outline: none;
+            font-size: 16px;
+        }
+        .input-group label {
+            position: absolute;
+            top: 50%;
+            left: 40px;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .input-group i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 16px;
+        }
+        .input-group input:focus + label, .input-group input:not(:placeholder-shown) + label {
+            top: 5px;
+            font-size: 12px;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #6200ea, #4b00c2);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease-in-out;
+        }
+        .login-btn:hover {
+            background: linear-gradient(45deg, #4b00c2, #6200ea);
+            transform: scale(1.05);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="assets/imges/user.png" alt="User Icon">
+        <h2 style="color: white;">Login</h2>
+        <div class="input-group">
+            <i class="fa-solid fa-phone"></i>
+            <input type="tel" id="phone" placeholder=" " required>
+            <label for="phone">Phone Number</label>
+        </div>
+        <div class="input-group">
+            <i class="fa-solid fa-key"></i>
+            <input type="text" id="otp" placeholder=" " required>
+            <label for="otp">OTP</label>
+        </div>
+        <button class="login-btn">Login</button>
+    </div>
+    <script src="script.js">
+    
+    </script>
+</body>
+</html>

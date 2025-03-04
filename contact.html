@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="stylesheet.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <section id="home">
+        <header >
+  <!-- Logo (No Blur) -->
+  <div class="logo">Mobi-Comm</div>
+
+  <div class="navbar-container">
+    <nav class="navbar navbar-expand-lg glass-navbar" id="dynamicNavbar">
+        <div class="container-fluid justify-content-center">
+            <div class="navbar-nav">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a class="nav-link" href="viewplans.html">
+                    <i class="fas fa-list"></i> View Plans
+                </a>
+                <a class="nav-link active" href="contact.html">
+                    <i class="fas fa-envelope"></i> Contact
+                </a>
+            </div>
+        </div>
+    </nav>
+</div>
+    
+    <div class="account-icon">
+        <a class="nav-link dropdown btn-light" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" id="dropdownMenu">
+            <li><a class="dropdown-item" href="login-page.html" id="loginLink">Login</a></li>
+        </ul>
+    </div>
+        </header>
+    </section>
+
+<section class="banner-1">
+    <div class="contact-section">
+        <!-- Left Side - Content -->
+        <div class="contact-info">
+            <h2 class="c-head">Contact Us</h2>
+            <p>Have any questions or concerns? Feel free to reach out. Our team is here to help!</p>
+            <div class="contact-details">
+                <p><i class="bi bi-geo-alt-fill"></i> 123 Street, City, Country</p>
+                <p><i class="bi bi-telephone-fill"></i> +123 456 7890</p>
+                <p><i class="bi bi-envelope-fill"></i> support@example.com</p>
+            </div>
+        </div>
+    
+        <!-- Right Side - Contact Form -->
+        <div class="contact-form mt-5">
+            <h3 class="c-head">Get in Touch</h3>
+            <form>
+                <div class="input-group">
+                    <input type="text" id="name" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <textarea id="message" placeholder="Your Message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+    
+
+        
+                <!-- Wave Image -->
+                <!-- <div class="responsive-image" style="margin-left: 0%;">
+                    <img class="responsive-image mz-0" src="assets/imges/wave1.png" alt="">
+                </div> -->
+            </div>
+        </section>
+        <section>
+            <div class="container py-5">
+                <h3 class="text-center mb-4">FAQs</h3>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item" data-aos="fade-right" data-aos-delay="100">
+                                <p class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        What is prepaid mobile recharge?
+                                    </button>
+                                </h2>
+                                <div id="faq1" class="accordion-collapse collapse"
+                                    data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Prepaid mobile recharge allows users to top-up their mobile
+                                        balance in advance for voice, data, and SMS services.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item" data-aos="fade-left" data-aos-delay="200">
+                                <p class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        How does prepaid recharge work?
+                                    </button>
+                                </h2>
+                                <div id="faq2" class="accordion-collapse collapse"
+                                    data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        After recharging, the user can use the services until the
+                                        balance or validity expires.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    </section>
+    <section class="banner">
+        <footer>
+            <div>
+                <img class="responsive-image" src="assets/imges/wave2.png" alt="">
+            </div>   
+            <div class="container-fluid px-5" data-aos="fade-up" data-aos-delay="100">
+                <div class="row">
+                    <div class="col-lg-4" data-aos="fade-left" data-aos-delay="100">
+                        <p class="display-6 text-white p-3" data-aos="fade-left" data-aos-delay="100" >Mobi-Comm</p>
+                        <p class="lead text-white">"Stay connected, stay ahead—MobiComm makes mobile recharging faster, easier, and more rewarding."</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <p class="display-6 text-white p-3" data-aos="fade-left" data-aos-delay="100" >Quick Links</p>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white text-decoration-none" data-aos="fade-left" data-aos-delay="100">Home</a></li>
+                            <li><a href="viewplans.html" class="text-white text-decoration-none" data-aos="fade-left" data-aos-delay="100">View Plans</a></li>
+                            <li><a href="contact.html" class="text-white text-decoration-none" data-aos="fade-left" data-aos-delay="100">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-3" data-aos="fade-left" data-aos-delay="100">
+                        <p class="display-6 text-white p-3">Follow Us</p>
+                        <div class="d-flex gap-3" data-aos="fade-left" data-aos-delay="100">
+                            <a href="#" class="text-white fs-4" data-aos="fade-left" data-aos-delay="100"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="text-white fs-4" data-aos="fade-left" data-aos-delay="100"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="text-white fs-4" data-aos="fade-left" data-aos-delay="100"><i class="bi bi-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </section>  
+    <script src="script.js"></script>
+        
+        
+        
+        
+</body>
+</html>

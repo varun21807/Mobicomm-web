@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+      body {
+            display: flex;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: #F5F7FA;
+            color: #333;
+        }
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #007BFF;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            transition: width 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar.minimized {
+            width: 80px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: #0056b3;
+        }
+        .sidebar a i {
+            font-size: 22px;
+            color: white;
+        }
+        .sidebar a span {
+            margin-left: 15px;
+            transition: opacity 0.3s;
+        }
+        .sidebar.minimized a span {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .admin-profile {
+            text-align: center;
+            margin-bottom: 20px;
+            transition: opacity 0.3s;
+        }
+        .admin-profile img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        .sidebar.minimized .admin-profile img {
+            display: none;
+        }
+        .toggle-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #0056b3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 20px auto;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .toggle-button i {
+            transition: transform 0.3s;
+            color: white;
+        }
+        .sidebar.minimized .toggle-button i {
+            transform: rotate(180deg);
+        }
+       .main-content {
+    margin-left: 250px;
+    padding: 20px;
+    flex-grow: 1;
+    background: #ffffff;
+    min-height: 100vh;
+    transition: margin-left 0.3s;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    width: calc(100% - 250px); /* Ensures it takes full width */
+}
+/* ✅ Fix for Large Screens (992px and above) */
+@media (min-width: 992px) {
+    .sidebar {
+        width: 250px;
+        transition: width 0.3s ease-in-out;
+    }
+
+    .sidebar.minimized {
+        width: 80px;
+    }
+
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+    }
+
+    .sidebar.minimized + .main-content {
+        margin-left: 80px;
+        width: calc(100% - 80px); /* ✅ Adjust width dynamically */
+    }
+}
+
+        .top-bar {
+            background: #ffffff;
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .top-bar .icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .top-bar .icons i {
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #007BFF;
+            transition: color 0.3s;
+        }
+        .top-bar .icons i:hover {
+            color: #0056b3;
+        }
+        .cards-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .card {
+            flex: 1 1 calc(25% - 20px);
+            min-width: 150px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #007BFF;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            background: #ffffff;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 10px;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        .card i {
+            font-size: 30px;
+            color: #007BFF;
+            margin-bottom: 10px;
+        }
+        .card h4 {
+            font-size: 16px;
+            color: #007BFF;
+            margin-bottom: 5px;
+        }
+        .card p {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+        @media (max-width: 768px) {
+            /* .sidebar {
+                width: 80px;
+            }
+            .sidebar a span {
+                display: none;
+            } */
+            .main-content {
+                margin-left: 80px;
+            }
+            .cards-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .card {
+                width: 0%;
+                max-width: 350px;
+            }
+        }
+        @media (max-width: 992px) {
+    .sidebar {
+        display: none; 
+    }
+    .main-content {
+        margin-left: 0; 
+        width: 100%;
+    }
+}
+
+
+/* Table Container */
+.table-container {
+    width: 100%;
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Styling */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+/* Table Header */
+.table thead {
+    background: linear-gradient(to right, #007BFF, #0056b3);
+    color: white;
+    text-transform: uppercase;
+}
+.table thead th {
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 2px solid white; /* Adds clean separation */
+    border-top: none !important; /* ✅ Removes top border */
+}
+/* ✅ Completely Remove Top Border from Table Header */
+.table thead th {
+    border-top: none !important; /* Removes any default Bootstrap top border */
+    background-clip: padding-box; /* Ensures no extra space */
+}
+
+/* ✅ Additional Fix - Remove Any Extra Borders */
+.table thead {
+    border-top: none !important; /* Ensures entire header has no top border */
+}
+
+
+/* Borders Between Rows Only */
+.table tbody tr {
+    border-bottom: 1px solid #ddd; /* Border only between rows */
+}
+.table tbody tr:last-child {
+    border-bottom: none; /* Removes last row border */
+}
+
+/* Remove Column Borders */
+.table td, .table th {
+    border: none !important; /* Removes vertical borders */
+    padding: 12px;
+    text-align: center;
+}
+
+/* Table Hover Effect */
+.table-hover tbody tr:hover {
+    background: #f8f9fa !important;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Badge Styling */
+.badge {
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+}
+.badge.bg-danger {
+    background: #dc3545;
+    color: white;
+}
+.badge.bg-warning {
+    background: #ffc107;
+    color: white;
+}
+.badge.bg-success {
+    background: #28a745;
+    color: white;
+}
+
+/* Notify Button */
+.btn-notify {
+    background: #ff9800;
+    color: white;
+    font-weight: bold;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.btn-notify i {
+    font-size: 16px;
+}
+.btn-notify:hover {
+    background: #e68900;
+    transform: scale(1.05);
+}
+/* ✅ Make Offcanvas Sidebar Smaller */
+.custom-offcanvas {
+    width: 250px !important; /* Custom width */
+    background: #007BFF; /* Match main sidebar */
+    color: white;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* ✅ Style Offcanvas Header */
+.custom-offcanvas .offcanvas-header {
+    background: #0056b3;
+    color: white;
+    border-top-right-radius: 10px;
+}
+
+/* ✅ Style Offcanvas Links */
+.custom-offcanvas .offcanvas-body a {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+.custom-offcanvas .offcanvas-body a:hover {
+    background: #004494;
+}
+
+/* ✅ Style Offcanvas Icons */
+.custom-offcanvas .offcanvas-body i {
+    font-size: 22px;
+    margin-right: 10px;
+}
+
+
+
+/* Modal Styling */
+.modal-header {
+    border-bottom: 2px solid white;
+}
+.modal-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+    </style>
+</head>
+<body>
+ <!-- Sidebar for Large Screens -->
+<div class="sidebar d-none d-lg-flex" id="sidebar">
+    <div class="admin-profile">
+        <img src="https://via.placeholder.com/80" alt="Admin Photo">
+        <h5>Admin Name</h5>
+    </div>
+    <a href="admin.html" class="active"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+    <a href="Users.html"><i class="bi bi-people"></i> <span>Users</span></a>
+    <a href="Plansm.html"><i class="bi bi-card-list"></i> <span>Plans</span></a>
+    <a href="transactions.html"><i class="bi bi-currency-exchange"></i> <span>Transactions</span></a>
+    <div class="toggle-button" onclick="toggleSidebar()">
+        <i class="bi bi-chevron-left"></i>
+    </div>
+</div>
+
+<!-- Offcanvas Sidebar for Small Screens -->
+<!-- Offcanvas Sidebar for Small Screens -->
+<div class="offcanvas offcanvas-start custom-offcanvas" tabindex="-1" id="mobileSidebar">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <a href="admin.html" class="active"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+        <a href="Users.html"><i class="bi bi-people"></i> <span>Users</span></a>
+        <a href="Plansm.html"><i class="bi bi-card-list"></i> <span>Plans</span></a>
+        <a href="transactions.html"><i class="bi bi-currency-exchange"></i> <span>Transactions</span></a>
+      
+    </div>
+</div>
+
+
+    <div class="main-content" id="main-content">
+        <div class="top-bar">
+            <button class="btn btn-primary d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <h2>MobiComm Admin Panel</h2>
+            <div class="icons">
+                <i class="bi bi-bell"></i>
+                <i class="bi bi-envelope"></i>
+                <div class="dropdown">
+                    <i class="bi bi-person-circle dropdown-toggle" data-bs-toggle="dropdown"></i>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="admin-profile.html"><i class="bi bi-person"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cards-container">
+            <div class="card"><i class="bi bi-people"></i><h4>Total Users</h4><p>1,250</p></div>
+            <div class="card"><i class="bi bi-person-check"></i><h4>Active Users</h4><p>980</p></div>
+            <div class="card"><i class="bi bi-person-dash"></i><h4>Inactive Users</h4><p>270</p></div>
+            <div class="card"><i class="bi bi-clock"></i><h4>Plans Expiring in 3 Days</h4><p>120</p></div>
+        </div>
+        <!-- Table Section -->
+        <div class="table-container">
+            <h3 class="mb-3 text-primary">Subscribers Expiring in 3 Days</h3>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="custom-header text-center">
+                        <tr>
+                            <th>Cust ID</th>
+                            <th>Name</th>
+                            <th>Mobile No.</th>
+                            <th>Email</th>
+                            <th>Expiring In</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center" id="expiringSubscribersTable">
+                        <!-- Data will be inserted dynamically via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    </div>
+   <!-- Recharge History Modal -->
+   <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Recharge History - <span id="customerName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Mobile Number: <span id="customerMobile"></span></h6>
+                <table class="table table-striped mt-3">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Plan</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable">
+                        <!-- History data will be inserted dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script>
+   function toggleSidebar() {
+    let sidebar = document.getElementById('sidebar');
+    let mainContent = document.getElementById('main-content');
+
+    sidebar.classList.toggle('minimized');
+
+    // ✅ Ensure main content resizes properly
+    if (sidebar.classList.contains('minimized')) {
+        mainContent.style.marginLeft = "80px";
+        mainContent.style.width = "calc(100% - 80px)";
+    } else {
+        mainContent.style.marginLeft = "250px";
+        mainContent.style.width = "calc(100% - 250px)";
+    }
+}
+
+//     function showHistory(customerId, name, mobile) {
+//         // Set customer name and mobile
+//         document.getElementById("customerName").textContent = name;
+//         document.getElementById("customerMobile").textContent = mobile;
+
+//         // Example Data (You can fetch from API or Database)
+//         const rechargeHistory = {
+//             "101": [
+//                 { date: "2025-02-10", plan: "Unlimited 30 Days", amount: "₹299", status: "Success" },
+//                 { date: "2025-01-05", plan: "5G Premium 60 Days", amount: "₹599", status: "Success" }
+//             ],
+//             "102": [
+//                 { date: "2025-02-15", plan: "Netflix Combo 45 Days", amount: "₹399", status: "Success" },
+//                 { date: "2025-01-10", plan: "Annual Super Saver", amount: "₹1999", status: "Success" }
+//             ],
+//             "103": [
+//                 { date: "2025-02-20", plan: "Basic 1GB/Day", amount: "₹199", status: "Pending" },
+//                 { date: "2025-01-12", plan: "Unlimited Yearly", amount: "₹2499", status: "Success" }
+//             ]
+//         };
+
+//         // Get table body & clear previous data
+//         const tableBody = document.getElementById("historyTable");
+//         tableBody.innerHTML = "";
+
+//         // Populate Table with Customer's History
+//         if (rechargeHistory[customerId]) {
+//             rechargeHistory[customerId].forEach(recharge => {
+//                 let row = `<tr>
+//                     <td>${recharge.date}</td>
+//                     <td>${recharge.plan}</td>
+//                     <td>${recharge.amount}</td>
+//                     <td><span class="badge ${recharge.status === 'Success' ? 'bg-success' : 'bg-danger'}">${recharge.status}</span></td>
+//                 </tr>`;
+//                 tableBody.innerHTML += row;
+//             });
+//         } else {
+//             tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No Recharge History Available</td></tr>`;
+//         }
+
+//         // Show Modal
+//         var historyModal = new bootstrap.Modal(document.getElementById('historyModal'));
+//         historyModal.show();
+//     }
+//     document.querySelector(".dropdown-item[href='#']").addEventListener("click", function(event) {
+//     event.preventDefault();
+//     if (confirm("Are you sure you want to log out?")) {
+//         window.location.href = "admin-login.html";
+//     }
+// });
+//json
+document.addEventListener("DOMContentLoaded", fetchExpiringSubscribers);
+
+function fetchExpiringSubscribers() {
+    fetch("http://localhost:3000/customers")
+        .then(response => response.json())
+        .then(customers => {
+            const today = new Date();
+            const expiringTableBody = document.getElementById("expiringSubscribersTable");
+            expiringTableBody.innerHTML = ""; // Clear previous data
+            console.log("Fetched Customers:", customers);
+
+            const expiringCustomers = customers.filter(cust => {
+    if (!cust.currentPlan || !cust.currentPlan.expiryDate) return false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize time
+
+    const expiryDate = new Date(cust.currentPlan.expiryDate);
+    expiryDate.setHours(0, 0, 0, 0); // Normalize time
+
+    const remainingDays = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+
+    console.log(`${cust.name}: Expires on ${expiryDate.toISOString().split("T")[0]}, Remaining Days: ${remainingDays}`);
+
+    return remainingDays >= 1 && remainingDays <= 3;
+});
+
+
+            expiringCustomers.forEach(customer => {
+    const expiryDate = new Date(customer.currentPlan.expiryDate);
+    const remainingDays = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+    let badgeClass = remainingDays === 3 ? "bg-danger" :
+                     remainingDays === 2 ? "bg-warning" :
+                     "bg-success";
+
+    const row = document.createElement("tr");
+    row.setAttribute("onclick", `showHistory('${customer.customerId}', '${customer.name}', '${customer.mobile}')`);
+    row.innerHTML = `
+        <td>${customer.customerId}</td>
+        <td>${customer.name}</td>
+        <td>${customer.mobile}</td>
+        <td>${customer.email}</td>
+        <td><span class="badge ${badgeClass}">${remainingDays} Days</span></td>
+        <td><button class="btn btn-notify"><i class="bi bi-bell-fill"></i> Notify</button></td> `;
+    expiringTableBody.appendChild(row);
+});
+
+        })
+        .catch(error => console.error("Error fetching expiring subscribers:", error));
+       
+
+}
+
+function showHistory(customerId) {
+    fetch("http://localhost:3000/customers")
+        .then(response => response.json())
+        .then(customers => {
+            const customer = customers.find(c => c.customerId === customerId);
+            if (!customer) {
+                console.error("Customer not found.");
+                return;
+            }
+
+            // Update modal title and customer details
+            document.getElementById("customerName").textContent = customer.name;
+            document.getElementById("customerMobile").textContent = customer.mobile;
+
+            // Get history table body
+            const historyTable = document.getElementById("historyTable");
+            historyTable.innerHTML = ""; // Clear previous data
+
+            // Populate table with recharge history
+            customer.rechargeHistory.forEach(history => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${history.rechargeDate}</td>
+                    <td>${history.title}</td>
+                    <td>₹${history.price}</td>
+                    <td>${new Date(history.expiryDate) > new Date() ? "Active" : "Expired"}</td>
+                `;
+                historyTable.appendChild(row);
+            });
+
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById("historyModal"));
+            modal.show();
+        })
+        .catch(error => console.error("Error fetching recharge history:", error));
+}
+
+
+</script>
+</html>

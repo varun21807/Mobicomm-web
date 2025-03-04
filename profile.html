@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background: #ffffff;
+            color: #333;
+            font-family: 'Poppins', sans-serif;
+        }
+        .card {
+            background: #fff;
+            color: #333;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.02);
+        }
+        .btn-custom {
+            background-color: #512DA8;
+            color: #fff;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-custom:hover {
+            background-color: #673AB7;
+        }
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .profile-section img {
+            border: 4px solid #512DA8;
+            padding: 5px;
+        }
+        .current-plan {
+            background: #512DA8;
+            color: #fff;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .list-group-item {
+            background: #f8f9fa;
+            border: none;
+            color: #512DA8;
+            font-weight: bold;
+        }
+        .edit-save-btns {
+            display: flex;
+            justify-content: space-between;
+        }
+        textarea.form-control, input.form-control {
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <button class="btn btn-secondary mb-3" onclick="history.back()">&#8592; Back</button>
+        <div class="row">
+            <div class="col-md-4 profile-section">
+                <h3 class="mt-2">John Doe</h3>
+                <p class="text-secondary">Prepaid User</p>
+                <div class="current-plan mt-3">
+                    <h5>Current Plan</h5>
+                    <p><strong>Plan:</strong> ₹599 - 28 Days</p>
+                    <p><strong>Data:</strong> 1.5GB/day</p>
+                    <p><strong>Calls:</strong> Unlimited</p>
+                    <p><strong>SMS:</strong> 100 SMS/day</p>
+                    <p><strong>Additional Benefits:</strong> Free Caller Tune</p>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <h5 class="mb-3">User Details</h5>
+                    <form id="user-form">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="name" value="John Doe" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" value="9876543210" disabled>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Alternate Phone Number</label>
+                                <input type="text" class="form-control" id="alt-phone" value="9123456789" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" value="john.doe@example.com" disabled>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Permanent Address</label>
+                            <textarea class="form-control" id="address" rows="2" disabled>123 Main St, City, State</textarea>
+                        </div>
+                        <div class="edit-save-btns mt-3">
+                            <button type="button" id="edit-btn" class="btn btn-custom">Edit</button>
+                            <button type="button" id="save-btn" class="btn btn-success d-none">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card text-center">
+                    <h5>Recharge History</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">₹599 - 28 Days - 15 Feb 2025</li>
+                        <li class="list-group-item">₹999 - 35 Days - 10 Jan 2025</li>
+                        <li class="list-group-item">₹799 - 30 Days - 5 Dec 2024</li>
+                    </ul>
+                    <button class="btn btn-custom mt-3">See Full History</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById("edit-btn").addEventListener("click", function() {
+            document.querySelectorAll("#user-form input:not([value='9876543210']), #user-form textarea").forEach(input => input.removeAttribute("disabled"));
+            document.getElementById("edit-btn").classList.add("d-none");
+            document.getElementById("save-btn").classList.remove("d-none");
+        });
+        
+        document.getElementById("save-btn").addEventListener("click", function() {
+            document.querySelectorAll("#user-form input, #user-form textarea").forEach(input => input.setAttribute("disabled", "true"));
+            document.getElementById("edit-btn").classList.remove("d-none");
+            document.getElementById("save-btn").classList.add("d-none");
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

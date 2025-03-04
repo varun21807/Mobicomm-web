@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ✅ Fullscreen Background */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #007bff, #6610f2);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* ✅ Glassmorphism Login Box */
+        .login-container {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-container h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.5);
+            color: white;
+            box-shadow: none;
+        }
+
+        .btn-login {
+            background: #28a745;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            background: #218838;
+        }
+
+        .forgot-password {
+            color: white;
+            display: block;
+            margin-top: 10px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .forgot-password:hover {
+            color: #d4d4d4;
+        }
+
+        /* ✅ Responsive */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2><i class="bi bi-person-lock"></i> Admin Login</h2>
+        <form id="loginForm">
+            <div class="mb-3">
+                <input type="email" id="email" class="form-control" placeholder="Email" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" id="password" class="form-control" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-login w-100 text-white">Login</button>
+            <a href="#" class="forgot-password">Forgot Password?</a>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form from submitting normally
+
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+
+            // Simulated login check (Replace with actual authentication)
+            if (email === "admin@example.com" && password === "Test@123") {
+                alert("Login Successful! Redirecting...");
+                window.location.href = "admin.html"; // Redirects to admin page
+            } else {
+                alert("Invalid email or password! Please try again.");
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1102 @@
+{
+  "categories": [
+    {
+      "id": "popular_plans",
+      "name": "Popular Plans",
+      "subcategories": [
+        {
+          "id": "yearly_plans",
+          "name": "Yearly Plans",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 3599,
+              "duration": 356,
+              "data": "2 GB",
+              "calls": "Unlimited",
+              "sms": 100,
+              "ott": "Netflix, Prime Video",
+              "benefits": "Free Caller Tune, Data Rollover",
+              "offer": "REPUBLIC DAY OFFER",
+              "badgeColor": "info"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 2025,
+              "duration": 200,
+              "data": "2.5 GB",
+              "calls": "Unlimited",
+              "sms": 50,
+              "ott": "Disney+ Hotstar",
+              "benefits": "Weekend Data Rollover",
+              "offer": "BEST 5G PLAN",
+              "badgeColor": "success"
+            },
+            {
+              "id": "plan_3",
+              "title": "Plan 3",
+              "price": 2999,
+              "duration": 240,
+              "data": "2 GB",
+              "calls": "Unlimited",
+              "sms": 75,
+              "ott": "SonyLIV",
+              "benefits": "Amazon Music Subscription",
+              "offer": "New Year Special",
+              "badgeColor": "warning"
+            }
+          ]
+        },
+        {
+          "id": "monthly_plans",
+          "name": "Monthly Plans",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 799,
+              "duration": 30,
+              "data": "2 GB",
+              "calls": "Unlimited",
+              "sms": 100,
+              "ott": "None",
+              "benefits": "Weekend Data Carryover",
+              "offer": "SUPER VALUE PLAN",
+              "badgeColor": "primary"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 599,
+              "duration": 28,
+              "data": "1.5 GB",
+              "calls": "Unlimited",
+              "sms": 50,
+              "ott": "None",
+              "benefits": "Free Caller Tune",
+              "offer": "POPULAR CHOICE",
+              "badgeColor": "warning"
+            },
+            {
+              "id": "plan_3",
+              "title": "Plan 3",
+              "price": 999,
+              "duration": 35,
+              "data": "3 GB",
+              "calls": "Unlimited",
+              "sms": 150,
+              "ott": "Netflix",
+              "benefits": "High-Speed Data Add-on",
+              "offer": "Extra Value Plan",
+              "badgeColor": "success"
+            }
+          ]
+        },
+        {
+          "id": "special_offers",
+          "name": "Special Offers",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 1299,
+              "duration": 90,
+              "data": "2.5 GB",
+              "calls": "Unlimited",
+              "sms": 120,
+              "ott": "Prime Video",
+              "benefits": "Weekend Data Rollover",
+              "offer": "Festive Offer",
+              "badgeColor": "danger"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 1599,
+              "duration": 120,
+              "data": "3 GB",
+              "calls": "Unlimited",
+              "sms": 200,
+              "ott": "Zee5",
+              "benefits": "Amazon Music & Extra 50GB Cloud Storage",
+              "offer": "Holiday Special",
+              "badgeColor": "info"
+            },
+            {
+              "id": "plan_3",
+              "title": "Plan 3",
+              "price": 1899,
+              "duration": 150,
+              "data": "3.5 GB",
+              "calls": "Unlimited",
+              "sms": 250,
+              "ott": "None",
+              "benefits": "Priority Customer Support",
+              "offer": "Limited Time Deal",
+              "badgeColor": "dark"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "true_5g_unlimited",
+      "name": "True 5G Unlimited",
+      "subcategories": [
+        {
+          "id": "high-speed_5g_plans",
+          "name": "High-Speed 5G Plans",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 999,
+              "duration": 28,
+              "data": "Unlimited 5G",
+              "calls": "Unlimited",
+              "sms": 100,
+              "ott": "None",
+              "benefits": "Priority 5G Network Access",
+              "offer": "BEST 5G VALUE",
+              "badgeColor": "primary"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 1499,
+              "duration": 56,
+              "data": "Unlimited 5G",
+              "calls": "Unlimited",
+              "sms": 200,
+              "ott": "Netflix, Prime Video",
+              "benefits": "5G Streaming & Gaming Optimization",
+              "offer": "PREMIUM 5G EXPERIENCE",
+              "badgeColor": "success"
+            }
+          ]
+        },
+        {
+          "id": "5g_+_ott_bundled_plans",
+          "name": "5G + OTT Bundled Plans",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 1799,
+              "duration": 90,
+              "data": "Unlimited 5G",
+              "calls": "Unlimited",
+              "sms": 300,
+              "ott": "Disney+ Hotstar, SonyLIV",
+              "benefits": "Weekend Data Rollover & Free Caller Tune",
+              "offer": "ULTIMATE ENTERTAINMENT",
+              "badgeColor": "info"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 2299,
+              "duration": 120,
+              "data": "Unlimited 5G",
+              "calls": "Unlimited",
+              "sms": 500,
+              "ott": "Zee5, Amazon Prime, Netflix",
+              "benefits": "High-Speed Data Add-on & VIP Support",
+              "offer": "PREMIUM OTT + 5G PLAN",
+              "badgeColor": "warning"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "entertainment_plans",
+      "name": "Entertainment Plans",
+      "subcategories": [
+        {
+          "id": "movies_&_tv_shows_pack",
+          "name": "Movies & TV Shows Pack",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 899,
+              "duration": 30,
+              "data": "2 GB/day",
+              "calls": "Unlimited",
+              "sms": 100,
+              "ott": "Netflix, Prime Video",
+              "benefits": "HD Streaming, Weekend Data Rollover",
+              "offer": "BINGE WATCHER PACK",
+              "badgeColor": "warning"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 1499,
+              "duration": 60,
+              "data": "3 GB/day",
+              "calls": "Unlimited",
+              "sms": 150,
+              "ott": "Disney+ Hotstar, SonyLIV",
+              "benefits": "Ad-Free Streaming, Extra 20GB Cloud Storage",
+              "offer": "ENTERTAINMENT BOOSTER",
+              "badgeColor": "success"
+            }
+          ]
+        },
+        {
+          "id": "music_lovers_pack",
+          "name": "Music Lovers Pack",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 699,
+              "duration": 30,
+              "data": "1.5 GB/day",
+              "calls": "Unlimited",
+              "sms": 100,
+              "ott": "Spotify Premium, Gaana+",
+              "benefits": "High-Quality Music Streaming, Free Caller Tune",
+              "offer": "MUSIC LOVERS SPECIAL",
+              "badgeColor": "primary"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 1299,
+              "duration": 60,
+              "data": "2 GB/day",
+              "calls": "Unlimited",
+              "sms": 150,
+              "ott": "Apple Music, Amazon Music",
+              "benefits": "Exclusive Playlists & Offline Mode",
+              "offer": "ULTIMATE MUSIC PACK",
+              "badgeColor": "info"
+            }
+          ]
+        },
+        {
+          "id": "gaming_&_streaming_pack",
+          "name": "Gaming & Streaming Pack",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 999,
+              "duration": 45,
+              "data": "3 GB/day",
+              "calls": "Unlimited",
+              "sms": 200,
+              "ott": "YouTube Premium, Twitch Prime",
+              "benefits": "High-Speed Gaming & Streaming",
+              "offer": "GAMER'S PARADISE",
+              "badgeColor": "danger"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 1599,
+              "duration": 90,
+              "data": "Unlimited",
+              "calls": "Unlimited",
+              "sms": 250,
+              "ott": "SonyLIV, Zee5, JioCinema",
+              "benefits": "Low-Latency Gaming, Cloud Storage",
+              "offer": "STREAM & GAME UNLIMITED",
+              "badgeColor": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "annual_plans",
+      "name": "Annual Plans",
+      "subcategories": [
+        {
+          "id": "affordable_yearly_plans",
+          "name": "Affordable Yearly Plans",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 2999,
+              "duration": 365,
+              "data": "1.5 GB/day",
+              "calls": "Unlimited",
+              "sms": 100,
+              "ott": "None",
+              "benefits": "Weekend Data Rollover",
+              "offer": "BUDGET ANNUAL PLAN",
+              "badgeColor": "success"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 3999,
+              "duration": 365,
+              "data": "2 GB/day",
+              "calls": "Unlimited",
+              "sms": 150,
+              "ott": "Disney+ Hotstar",
+              "benefits": "Free Caller Tune, 5G Access",
+              "offer": "VALUE YEARLY PACK",
+              "badgeColor": "primary"
+            }
+          ]
+        },
+        {
+          "id": "premium_yearly_plans",
+          "name": "Premium Yearly Plans",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 4999,
+              "duration": 365,
+              "data": "3 GB/day",
+              "calls": "Unlimited",
+              "sms": 200,
+              "ott": "Netflix, Prime Video, Zee5",
+              "benefits": "High-Speed 5G, Cloud Storage",
+              "offer": "ULTIMATE ENTERTAINMENT PACK",
+              "badgeColor": "warning"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 5999,
+              "duration": 365,
+              "data": "Unlimited",
+              "calls": "Unlimited",
+              "sms": 300,
+              "ott": "SonyLIV, Hotstar, Amazon Music",
+              "benefits": "Priority Support, VIP OTT Access",
+              "offer": "BEST PREMIUM PLAN",
+              "badgeColor": "danger"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phone_plans",
+      "name": "Phone Plans",
+      "subcategories": [
+        {
+          "id": "basic_calling_plans",
+          "name": "Basic Calling Plans",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 199,
+              "duration": 28,
+              "calls": "Unlimited",
+              "sms": 100,
+              "ott": "None",
+              "benefits": "Free Caller Tune, Missed Call Alerts",
+              "offer": "BASIC CALLING PLAN",
+              "badgeColor": "primary"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 249,
+              "duration": 30,
+              "calls": "Unlimited",
+              "sms": 120,
+              "ott": "None",
+              "benefits": "Roaming Incoming Free, Call Forwarding",
+              "offer": "AFFORDABLE TALKTIME PLAN",
+              "badgeColor": "success"
+            }
+          ]
+        },
+        {
+          "id": "extended_validity_calling_plans",
+          "name": "Extended Validity Calling Plans",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 599,
+              "duration": 84,
+              "calls": "Unlimited",
+              "sms": 200,
+              "ott": "None",
+              "benefits": "Extended Validity, Priority Call Support",
+              "offer": "LONG-TERM CALLING PLAN",
+              "badgeColor": "info"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 799,
+              "duration": 90,
+              "calls": "Unlimited",
+              "sms": 250,
+              "ott": "None",
+              "benefits": "International Roaming (Selected Countries)",
+              "offer": "MOST POPULAR CALLING PACK",
+              "badgeColor": "warning"
+            }
+          ]
+        },
+        {
+          "id": "premium_calling_plans",
+          "name": "Premium Calling Plans",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 1199,
+              "duration": 180,
+              "calls": "Unlimited",
+              "sms": 500,
+              "ott": "None",
+              "benefits": "Priority Customer Support, Conference Calling",
+              "offer": "PREMIUM CALLING CHOICE",
+              "badgeColor": "danger"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 1599,
+              "duration": 365,
+              "calls": "Unlimited",
+              "sms": 1000,
+              "ott": "None",
+              "benefits": "365-Day Validity, VIP Helpline",
+              "offer": "ULTIMATE ANNUAL TALK PLAN",
+              "badgeColor": "dark"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "isd_plans",
+      "name": "Isd Plans",
+      "subcategories": [
+        {
+          "id": "basic_isd_packs",
+          "name": "Basic ISD Packs",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 99,
+              "duration": 7,
+              "calls": "30 minutes",
+              "sms": 10,
+              "ott": "None",
+              "benefits": "Reduced rates for USA, Canada, UK",
+              "offer": "BASIC ISD PLAN",
+              "badgeColor": "primary"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 199,
+              "duration": 14,
+              "calls": "75 minutes",
+              "sms": 25,
+              "ott": "None",
+              "benefits": "Low-cost calling to popular destinations",
+              "offer": "POPULAR CHOICE",
+              "badgeColor": "success"
+            }
+          ]
+        },
+        {
+          "id": "mid-range_isd_packs",
+          "name": "Mid-Range ISD Packs",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 399,
+              "duration": 30,
+              "calls": "200 minutes",
+              "sms": 50,
+              "ott": "None",
+              "benefits": "Special rates for Gulf & Asian countries",
+              "offer": "BEST VALUE ISD PLAN",
+              "badgeColor": "info"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 599,
+              "duration": 45,
+              "calls": "350 minutes",
+              "sms": 100,
+              "ott": "None",
+              "benefits": "Discounted calls to Europe & Australia",
+              "offer": "EXTENDED ISD OFFER",
+              "badgeColor": "warning"
+            }
+          ]
+        },
+        {
+          "id": "premium_isd_packs",
+          "name": "Premium ISD Packs",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 999,
+              "duration": 90,
+              "calls": "800 minutes",
+              "sms": 200,
+              "ott": "None",
+              "benefits": "Unlimited calling to selected countries",
+              "offer": "PREMIUM GLOBAL CALLING",
+              "badgeColor": "danger"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 1499,
+              "duration": 180,
+              "calls": "1500 minutes",
+              "sms": 300,
+              "ott": "None",
+              "benefits": "VIP customer support, priority connection",
+              "offer": "ULTIMATE ISD PLAN",
+              "badgeColor": "dark"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data_packs",
+      "name": "Data Packs",
+      "subcategories": [
+        {
+          "id": "daily_data_packs",
+          "name": "Daily Data Packs",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 19,
+              "duration": 1,
+              "data": "1 GB",
+              "calls": "None",
+              "sms": "None",
+              "ott": "None",
+              "benefits": "High-speed data for 24 hours",
+              "offer": "1-DAY BOOSTER",
+              "badgeColor": "primary"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 49,
+              "duration": 2,
+              "data": "2 GB",
+              "calls": "None",
+              "sms": "None",
+              "ott": "None",
+              "benefits": "Valid for 2 days, no speed cap",
+              "offer": "SUPER VALUE DATA",
+              "badgeColor": "success"
+            }
+          ]
+        },
+        {
+          "id": "weekly_data_packs",
+          "name": "Weekly Data Packs",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 99,
+              "duration": 7,
+              "data": "6 GB",
+              "calls": "None",
+              "sms": "None",
+              "ott": "None",
+              "benefits": "Ideal for short-term heavy usage",
+              "offer": "WEEKLY DATA BOOST",
+              "badgeColor": "info"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 149,
+              "duration": 7,
+              "data": "10 GB",
+              "calls": "None",
+              "sms": "None",
+              "ott": "None",
+              "benefits": "Unlimited late-night data (12 AM - 6 AM)",
+              "offer": "NIGHT SURFER PACK",
+              "badgeColor": "warning"
+            }
+          ]
+        },
+        {
+          "id": "monthly_data_packs",
+          "name": "Monthly Data Packs",
+          "plans": [
+            {
+              "id": "plan_1",
+              "title": "Plan 1",
+              "price": 299,
+              "duration": 30,
+              "data": "20 GB",
+              "calls": "None",
+              "sms": "None",
+              "ott": "None",
+              "benefits": "Carry forward unused data",
+              "offer": "MONTHLY SUPER PACK",
+              "badgeColor": "danger"
+            },
+            {
+              "id": "plan_2",
+              "title": "Plan 2",
+              "price": 499,
+              "duration": 30,
+              "data": "40 GB",
+              "calls": "None",
+              "sms": "None",
+              "ott": "Disney+ Hotstar",
+              "benefits": "OTT subscription included",
+              "offer": "ENTERTAINMENT PLAN",
+              "badgeColor": "dark"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "customers": [
+    {
+      "customerId": "CUST1001",
+      "name": "Monk",
+      "mobile": "9876543210",
+      "email": "monk123@example.com",
+      "currentPlan": {
+        "planId": "bestSeller",
+        "title": "BestSeller",
+        "data": "2GB/day",
+        "validity": 30,
+        "price": 499,
+        "voice": "Unlimited",
+        "description": "Includes Netflix.",
+        "expiryDate": "2025-03-28"
+      },
+      "accountStatus": "Non-Active",
+      "rechargeHistory": [
+        {
+          "planId": "powerPlay",
+          "title": "PowerPlay",
+          "rechargeDate": "2025-01-28",
+          "expiryDate": "2025-02-28",
+          "price": 799
+        },
+        {
+          "planId": "xtremeNet",
+          "title": "XtremeNet",
+          "rechargeDate": "2024-12-28",
+          "expiryDate": "2025-01-28",
+          "price": 499
+        }
+      ],
+      "id": "1c43"
+    },
+    {
+      "customerId": "CUST1002",
+      "name": "Gokulakannan",
+      "mobile": "9876543211",
+      "email": "gokul@example.com",
+      "currentPlan": {
+        "planId": "infinityGo",
+        "title": "InfinityGo",
+        "data": "Unlimited 5G",
+        "validity": 45,
+        "price": 899,
+        "voice": "Unlimited",
+        "description": "No OTT benefits.",
+        "expiryDate": "2025-03-04"
+      },
+      "accountStatus": "Non-Active",
+      "rechargeHistory": [
+        {
+          "planId": "streamFlex",
+          "title": "StreamFlex",
+          "rechargeDate": "2025-02-12",
+          "expiryDate": "2025-03-12",
+          "price": 799
+        },
+        {
+          "planId": "maxSaver",
+          "title": "MaxSaver",
+          "rechargeDate": "2024-11-12",
+          "expiryDate": "2025-02-12",
+          "price": 699
+        }
+      ],
+      "id": "32f6"
+    },
+    {
+      "customerId": "CUST1003",
+      "name": "Dhanush",
+      "mobile": "9876543212",
+      "email": "dhanush@example.com",
+      "currentPlan": {
+        "planId": "supremePlan",
+        "title": "Supreme Plan",
+        "data": "5GB/day",
+        "validity": 90,
+        "price": 999,
+        "voice": "Unlimited",
+        "description": "No OTT benefits.",
+        "expiryDate": "2025-05-01"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "ultimatePack",
+          "title": "UltimatePack",
+          "rechargeDate": "2025-01-01",
+          "expiryDate": "2025-04-01",
+          "price": 1499
+        }
+      ],
+      "id": "aa84"
+    },
+    {
+      "customerId": "CUST1004",
+      "name": "varun",
+      "mobile": "9876543213",
+      "email": "varun@example.com",
+      "currentPlan": {
+        "planId": "eliteConnect",
+        "title": "EliteConnect",
+        "data": "Unlimited global roaming",
+        "validity": 120,
+        "price": 1199,
+        "voice": "Unlimited",
+        "description": "Includes Amazon Prime & SonyLIV.",
+        "expiryDate": "2025-06-15"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "infinityGo",
+          "title": "InfinityGo",
+          "rechargeDate": "2024-12-15",
+          "expiryDate": "2025-04-15",
+          "price": 899
+        }
+      ],
+      "id": "154c"
+    },
+    {
+      "customerId": "CUST1005",
+      "name": "gopi",
+      "mobile": "9876543214",
+      "email": "gopi123@example.com",
+      "currentPlan": {
+        "planId": "ultimatePack",
+        "title": "UltimatePack",
+        "data": "Unlimited 5G",
+        "validity": 180,
+        "price": 1499,
+        "voice": "Unlimited",
+        "description": "Includes Netflix, Disney+ Hotstar & Spotify Premium.",
+        "expiryDate": "2025-08-20"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "supremePlan",
+          "title": "Supreme Plan",
+          "rechargeDate": "2025-02-20",
+          "expiryDate": "2025-05-20",
+          "price": 999
+        }
+      ],
+      "id": "b9c7"
+    },
+    {
+      "customerId": "CUST2001",
+      "name": "KamalRaj",
+      "mobile": "9876543220",
+      "email": "kamal345@example.com",
+      "currentPlan": {
+        "planId": "streamFlex",
+        "title": "StreamFlex",
+        "data": "3GB/day",
+        "validity": 30,
+        "price": 799,
+        "voice": "Unlimited",
+        "description": "Includes Netflix & Disney+ Hotstar.",
+        "expiryDate": "2025-04-10"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "powerPlay",
+          "title": "PowerPlay",
+          "rechargeDate": "2025-02-10",
+          "expiryDate": "2025-03-10",
+          "price": 799
+        }
+      ],
+      "id": "5f09"
+    },
+    {
+      "customerId": "CUST2002",
+      "name": "Dante",
+      "mobile": "9876543221",
+      "email": "dante123@example.com",
+      "currentPlan": {
+        "planId": "allRounder",
+        "title": "All-Rounder",
+        "data": "2.5GB/day",
+        "validity": 56,
+        "price": 599,
+        "voice": "Unlimited",
+        "description": "No OTT benefits.",
+        "expiryDate": "2025-05-05"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "bestSeller",
+          "title": "BestSeller",
+          "rechargeDate": "2025-03-05",
+          "expiryDate": "2025-04-05",
+          "price": 499
+        }
+      ],
+      "id": "d88d"
+    },
+    {
+      "customerId": "CUST2003",
+      "name": "kratos",
+      "mobile": "9876543222",
+      "email": "kratos@example.com",
+      "currentPlan": {
+        "planId": "supremePlan",
+        "title": "Supreme Plan",
+        "data": "5GB/day",
+        "validity": 90,
+        "price": 999,
+        "voice": "Unlimited",
+        "description": "No OTT benefits.",
+        "expiryDate": "2025-06-20"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "xtremeNet",
+          "title": "XtremeNet",
+          "rechargeDate": "2025-02-20",
+          "expiryDate": "2025-05-20",
+          "price": 499
+        }
+      ],
+      "id": "773d"
+    },
+    {
+      "customerId": "CUST2004",
+      "name": "posiedon",
+      "mobile": "9876543223",
+      "email": "godofsea12@example.com",
+      "currentPlan": {
+        "planId": "eliteConnect",
+        "title": "EliteConnect",
+        "data": "Unlimited global roaming",
+        "validity": 120,
+        "price": 1199,
+        "voice": "Unlimited",
+        "description": "Includes Amazon Prime & SonyLIV.",
+        "expiryDate": "2025-07-01"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "infinityGo",
+          "title": "InfinityGo",
+          "rechargeDate": "2025-03-01",
+          "expiryDate": "2025-06-01",
+          "price": 899
+        }
+      ],
+      "id": "5fdf"
+    },
+    {
+      "customerId": "CUST2005",
+      "name": "helios",
+      "mobile": "9876543224",
+      "email": "godofsun234@example.com",
+      "currentPlan": {
+        "planId": "ultimatePack",
+        "title": "UltimatePack",
+        "data": "Unlimited 5G",
+        "validity": 180,
+        "price": 1499,
+        "voice": "Unlimited",
+        "description": "Includes Netflix, Disney+ Hotstar & Spotify Premium.",
+        "expiryDate": "2025-09-15"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "supremePlan",
+          "title": "Supreme Plan",
+          "rechargeDate": "2025-03-15",
+          "expiryDate": "2025-06-15",
+          "price": 999
+        }
+      ],
+      "id": "dfa3"
+    },
+    {
+      "customerId": "CUST3001",
+      "name": "Hades",
+      "mobile": "9876543230",
+      "email": "godofspeed@example.com",
+      "currentPlan": {
+        "planId": "maxSaver",
+        "title": "MaxSaver",
+        "data": "1.5GB/day",
+        "validity": 84,
+        "price": 699,
+        "voice": "Unlimited",
+        "description": "No OTT benefits.",
+        "expiryDate": "2025-03-01"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "allRounder",
+          "title": "All-Rounder",
+          "rechargeDate": "2025-03-10",
+          "expiryDate": "2025-06-10",
+          "price": 599
+        }
+      ],
+      "id": "ac9d"
+    },
+    {
+      "customerId": "CUST3002",
+      "name": "Zeus",
+      "mobile": "9876543231",
+      "email": "kingofgods12@example.com",
+      "currentPlan": {
+        "planId": "boundlessX",
+        "title": "BoundlessX",
+        "data": "Unlimited 5G",
+        "validity": 75,
+        "price": 899,
+        "voice": "Unlimited",
+        "description": "Includes SonyLIV & Zee5.",
+        "expiryDate": "2025-03-01"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "powerUnleashed",
+          "title": "PowerUnleashed",
+          "rechargeDate": "2025-01-20",
+          "expiryDate": "2025-04-20",
+          "price": 699
+        }
+      ],
+      "id": "65e6"
+    },
+    {
+      "customerId": "CUST3003",
+      "name": "Hades",
+      "mobile": "9876543232",
+      "email": "godofunderworld23@example.com",
+      "currentPlan": {
+        "planId": "totalFreedom",
+        "title": "TotalFreedom",
+        "data": "Unlimited 5G",
+        "validity": 180,
+        "price": 1499,
+        "voice": "Unlimited",
+        "description": "Includes Netflix, Disney+ Hotstar, Amazon Prime, Spotify, YouTube Premium.",
+        "expiryDate": "2025-02-28"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "supremeConnect",
+          "title": "SupremeConnect",
+          "rechargeDate": "2024-12-10",
+          "expiryDate": "2025-03-06",
+          "price": 799
+        }
+      ],
+      "id": "faf3"
+    },
+    {
+      "customerId": "CUST3004",
+      "name": "hercules",
+      "mobile": "9876543233",
+      "email": "godofstrength23@example.com",
+      "currentPlan": {
+        "planId": "hyperConnect",
+        "title": "HyperConnect 399",
+        "data": "3GB/day",
+        "validity": 30,
+        "price": 399,
+        "voice": "Unlimited",
+        "description": "No OTT benefits included.",
+        "expiryDate": "2025-03-05"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "streamFlex",
+          "title": "StreamFlex",
+          "rechargeDate": "2025-02-15",
+          "expiryDate": "2025-03-15",
+          "price": 799
+        }
+      ],
+      "id": "21ac"
+    },
+    {
+      "customerId": "CUST3005",
+      "name": "Kratos",
+      "mobile": "9876543234",
+      "email": "godofhope12@example.com",
+      "currentPlan": {
+        "planId": "ultimateGamer",
+        "title": "Ultimate Gamer",
+        "data": "5GB/day",
+        "validity": 90,
+        "price": 999,
+        "voice": "Unlimited",
+        "description": "Includes Netflix, Amazon Prime & PlayStation Plus.",
+        "expiryDate": "2025-03-04"
+      },
+      "accountStatus": "Active",
+      "rechargeHistory": [
+        {
+          "planId": "eliteConnect",
+          "title": "EliteConnect",
+          "rechargeDate": "2025-01-25",
+          "expiryDate": "2025-02-27",
+          "price": 1199
+        }
+      ],
+      "id": "e452"
+    }
+  ]
+}

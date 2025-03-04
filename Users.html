@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: #F5F7FA;
+            color: #333;
+        }
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #007BFF;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            transition: width 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar.minimized {
+            width: 80px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: #0056b3;
+        }
+        .sidebar a i {
+            font-size: 22px;
+            color: white;
+        }
+        .sidebar a span {
+            margin-left: 15px;
+            transition: opacity 0.3s;
+        }
+        .sidebar.minimized a span {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .admin-profile {
+            text-align: center;
+            margin-bottom: 20px;
+            transition: opacity 0.3s;
+        }
+        .admin-profile img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        .sidebar.minimized .admin-profile img {
+            display: none;
+        }
+        .toggle-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #0056b3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 20px auto;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .toggle-button i {
+            transition: transform 0.3s;
+            color: white;
+        }
+        .sidebar.minimized .toggle-button i {
+            transform: rotate(180deg);
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            flex-grow: 1;
+            background: #ffffff;
+            min-height: 100vh;
+            transition: margin-left 0.3s;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            width: calc(100% - 250px);
+        }
+/* ✅ Fix for Large Screens (992px and above) */
+@media (min-width: 992px) {
+    .sidebar {
+        width: 250px;
+        transition: width 0.3s ease-in-out;
+    }
+
+    .sidebar.minimized {
+        width: 80px;
+    }
+
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+    }
+
+    .sidebar.minimized + .main-content {
+        margin-left: 80px;
+        width: calc(100% - 80px); /* ✅ Adjust width dynamically */
+    }
+}
+
+
+        .top-bar {
+            background: #ffffff;
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .top-bar .icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .top-bar .icons i {
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #007BFF;
+            transition: color 0.3s;
+        }
+        .top-bar .icons i:hover {
+            color: #0056b3;
+        }
+        .user-container {
+            margin-top: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .search-bar {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .search-bar input {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .table thead {
+            background: linear-gradient(to right, #007BFF, #0056b3);
+            color: white;
+            text-transform: uppercase;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+            padding: 10px;
+            text-align: center;
+        }
+        .badge {
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .badge-active {
+            background: #28a745;
+            color: white;
+        }
+        .badge-inactive {
+            background: #dc3545;
+            color: white;
+        }
+        @media (max-width: 768px) {
+          
+           
+            .search-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        @media (max-width: 992px) {
+    .sidebar {
+        display: none; /* Hide regular sidebar */
+    }
+    .main-content {
+        margin-left: 0; /* Full width content */
+        width: 100%;
+    }
+}
+
+/* ✅ Make the table scrollable on small screens */
+.table-responsive {
+    overflow-x: auto; /* Enables horizontal scrolling */
+    border-radius: 10px;
+}
+
+/* ✅ Keep table structure on small screens */
+.table {
+    border-collapse: collapse; /* Fixes layout issues */
+    width: 100%;
+    min-width: 600px; /* Ensures columns don't shrink too much */
+}
+
+/* ✅ Table Header */
+.table thead {
+    background: linear-gradient(to right, #007BFF, #0056b3);
+    color: white;
+    text-transform: uppercase;
+}
+
+/* ✅ Table Cells */
+.table th, .table td {
+    vertical-align: middle;
+    padding: 10px;
+    text-align: center;
+    white-space: nowrap; /* Prevents text from wrapping */
+}
+
+/* ✅ Fix Column Widths */
+.table th:nth-child(1), .table td:nth-child(1) { width: 10%; } /* Cust ID */
+.table th:nth-child(2), .table td:nth-child(2) { width: 20%; } /* Name */
+.table th:nth-child(3), .table td:nth-child(3) { width: 30%; } /* Email */
+.table th:nth-child(4), .table td:nth-child(4) { width: 20%; } /* Mobile No. */
+.table th:nth-child(5), .table td:nth-child(5) { width: 20%; } /* Status */
+
+/* ✅ Badge Styling */
+.badge {
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+.badge-active {
+    background: #28a745;
+    color: white;
+}
+.badge-inactive {
+    background: #dc3545;
+    color: white;
+}
+
+/* ✅ Fix for Small Screens */
+@media (max-width: 768px) {
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto; /* ✅ Ensure table scrolls horizontally */
+    }
+
+    .table {
+        min-width: 500px; /* ✅ Prevents column shrinking */
+    }
+
+    .table th, .table td {
+        white-space: nowrap; /* ✅ Keep column content inline */
+    }
+}
+.modal-header {
+    border-bottom: 2px solid white;
+}
+.modal-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+/* ✅ Charts Container */
+.charts-container {
+    margin: 20px 0;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ Chart Cards */
+/* ✅ Ensure charts are contained within their divs */
+/* ✅ Ensure charts are contained properly */
+.chart-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    height: 350px; /* Consistent height */
+    position: relative;
+    overflow: hidden; /* Prevents overflow */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ✅ Ensure canvas does not overflow */
+.chart-card canvas {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    display: block;
+}
+
+
+.chart-card h5 {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+/* ✅ Make Offcanvas Sidebar Smaller */
+.custom-offcanvas {
+    width: 250px !important; /* Custom width */
+    background: #007BFF; /* Match main sidebar */
+    color: white;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* ✅ Style Offcanvas Header */
+.custom-offcanvas .offcanvas-header {
+    background: #0056b3;
+    color: white;
+    border-top-right-radius: 10px;
+}
+
+/* ✅ Style Offcanvas Links */
+.custom-offcanvas .offcanvas-body a {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+.custom-offcanvas .offcanvas-body a:hover {
+    background: #004494;
+}
+
+/* ✅ Style Offcanvas Icons */
+.custom-offcanvas .offcanvas-body i {
+    font-size: 22px;
+    margin-right: 10px;
+}
+
+
+    </style>
+</head>
+<body>
+
+   <!-- Sidebar for Large Screens -->
+<div class="sidebar d-none d-lg-flex" id="sidebar">
+    <div class="admin-profile">
+        <img src="https://via.placeholder.com/80" alt="Admin Photo">
+        <h5>Admin Name</h5>
+    </div>
+    <a href="admin.html"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+        <a href="Users.html" class="active"><i class="bi bi-people"></i> <span>Users</span></a>
+        <a href="Plansm.html"><i class="bi bi-card-list"></i> <span>Plans</span></a>
+        <a href="transactions.html"><i class="bi bi-currency-exchange"></i> <span>Transactions</span></a>
+    <div class="toggle-button" onclick="toggleSidebar()">
+        <i class="bi bi-chevron-left"></i>
+    </div>
+</div>
+
+<!-- Offcanvas Sidebar for Small Screens -->
+<!-- Offcanvas Sidebar for Small Screens -->
+<div class="offcanvas offcanvas-start custom-offcanvas" tabindex="-1" id="mobileSidebar">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <a href="admin.html"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+        <a href="Users.html" class="active"><i class="bi bi-people"></i> <span>Users</span></a>
+        <a href="Plansm.html"><i class="bi bi-card-list"></i> <span>Plans</span></a>
+        <a href="transactions.html"><i class="bi bi-currency-exchange"></i> <span>Transactions</span></a>
+        
+    </div>
+</div>
+
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="top-bar">
+            <button class="btn btn-primary d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <h2>MobiComm Admin Panel</h2>
+            <div class="icons">
+                <i class="bi bi-bell"></i>
+                <i class="bi bi-envelope"></i>
+                <div class="dropdown">
+                    <i class="bi bi-person-circle dropdown-toggle" data-bs-toggle="dropdown"></i>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="admin-profile.html"><i class="bi bi-person"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+<!-- ✅ Business Metrics Section -->
+  <div class="charts-container">
+    <div class="row">
+        <!-- New Users Growth (Line Chart) -->
+        <div class="col-lg-6 col-md-12">
+            <div class="chart-card">
+                <h5>📈 New Users Growth</h5>
+                <canvas id="newUsersChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Monthly User Growth (Bar Chart) -->
+        <div class="col-lg-6 col-md-12">
+            <div class="chart-card">
+                <h5>📊 Monthly User Growth</h5>
+                <canvas id="monthlyGrowthChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Active vs. Inactive Users (Pie Chart) -->
+        <div class="col-lg-6 col-md-12">
+            <div class="chart-card">
+                <h5>🟢 Active vs. Inactive Users</h5>
+                <canvas id="activeUsersChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Subscription Trends (Doughnut Chart) -->
+        <div class="col-lg-6 col-md-12">
+            <div class="chart-card">
+                <h5>📌 Subscription Trends</h5>
+                <canvas id="subscriptionTrendsChart"></canvas>
+            </div>
+        </div>
+      </div>
+      </div>
+    
+
+        
+      <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Cust ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile No.</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="userTable">
+                <!-- Data will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+            
+         <!-- Recharge History Modal -->
+    <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Recharge History - <span id="customerName"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Mobile Number: <span id="customerMobile"></span></h6>
+                    <table class="table table-striped mt-3">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Plan</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTable">
+                            <!-- Data will be inserted here via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+        
+        <script>
+        function toggleSidebar() {
+    let sidebar = document.getElementById('sidebar');
+    let mainContent = document.getElementById('main-content');
+
+    sidebar.classList.toggle('minimized');
+
+    // ✅ Ensure main content resizes properly
+    if (sidebar.classList.contains('minimized')) {
+        mainContent.style.marginLeft = "80px";
+        mainContent.style.width = "calc(100% - 80px)";
+    } else {
+        mainContent.style.marginLeft = "250px";
+        mainContent.style.width = "calc(100% - 250px)";
+    }
+}
+        function searchUsers() {
+            let input = document.getElementById("search").value.toLowerCase();
+            let rows = document.querySelectorAll("#userTable tr");
+
+            rows.forEach(row => {
+                let name = row.cells[1].textContent.toLowerCase();
+                row.style.display = name.includes(input) ? "" : "none";
+            });
+        }
+
+//     const rechargeHistory = {
+//     101: [
+//         { date: "2024-02-01", plan: "Unlimited 5G", amount: "$30", status: "Successful" },
+//         { date: "2024-01-15", plan: "Basic Plan", amount: "$15", status: "Failed" },
+//     ],
+//     102: [
+//         { date: "2024-02-10", plan: "Annual Plan", amount: "$120", status: "Successful" },
+//     ]
+// };
+
+// // ✅ Function to show history in modal
+// function showHistory(userId, name, mobile) {
+//     let modalElement = document.getElementById('historyModal');
+//     let modalInstance = new bootstrap.Modal(modalElement);
+
+//     // Set customer name and mobile number in the modal
+//     document.getElementById("customerName").textContent = name;
+//     document.getElementById("customerMobile").textContent = mobile;
+
+//     let historyTable = document.getElementById("historyTable");
+//     historyTable.innerHTML = ""; // Clear previous data
+
+//     if (rechargeHistory[userId]) {
+//         rechargeHistory[userId].forEach(entry => {
+//             let row = `<tr>
+//                 <td>${entry.date}</td>
+//                 <td>${entry.plan}</td>
+//                 <td>${entry.amount}</td>
+//                 <td><span class="badge ${entry.status === 'Successful' ? 'bg-success' : 'bg-danger'}">${entry.status}</span></td>
+//             </tr>`;
+//             historyTable.innerHTML += row;
+//         });
+//     } else {
+//         historyTable.innerHTML = "<tr><td colspan='4' class='text-center'>No history available</td></tr>";
+//     }
+
+//     // Show modal
+//     modalInstance.show();
+
+//     // ✅ Ensure modal is properly removed from DOM on close
+//     modalElement.addEventListener('hidden.bs.modal', function () {
+//         document.body.classList.remove('modal-open');  // Remove Bootstrap’s modal-open class
+//         document.querySelectorAll('.modal-backdrop').forEach(el => el.remove()); // Remove backdrop
+//     });
+// }
+// ✅ Get Chart Context
+const newUsersCtx = document.getElementById("newUsersChart").getContext("2d");
+const activeUsersCtx = document.getElementById("activeUsersChart").getContext("2d");
+const monthlyGrowthCtx = document.getElementById("monthlyGrowthChart").getContext("2d");
+const subscriptionTrendsCtx = document.getElementById("subscriptionTrendsChart").getContext("2d");
+
+// ✅ New Users Growth (Line Chart)
+new Chart(newUsersCtx, {
+    type: "line",
+    data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        datasets: [{
+            label: "New Users",
+            data: [150, 200, 250, 400, 600, 800],
+            backgroundColor: "rgba(0, 123, 255, 0.2)",
+            borderColor: "#007BFF",
+            borderWidth: 2,
+            tension: 0.3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+document.querySelector(".dropdown-item[href='#']").addEventListener("click", function(event) {
+    event.preventDefault();
+    if (confirm("Are you sure you want to log out?")) {
+        window.location.href = "admin-login.html";
+    }
+});
+
+// ✅ Monthly User Growth (Bar Chart)
+new Chart(monthlyGrowthCtx, {
+    type: "bar",
+    data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        datasets: [{
+            label: "User Growth",
+            data: [500, 700, 900, 1200, 1400, 1800],
+            backgroundColor: "#007BFF"
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+// ✅ Active vs. Inactive Users (Pie Chart)
+new Chart(activeUsersCtx, {
+    type: "pie",
+    data: {
+        labels: ["Active Users", "Inactive Users"],
+        datasets: [{
+            data: [75, 25], // Example: 75% Active, 25% Inactive
+            backgroundColor: ["#28a745", "#dc3545"]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+// ✅ Subscription Trends (Doughnut Chart)
+new Chart(subscriptionTrendsCtx, {
+    type: "doughnut",
+    data: {
+        labels: ["Monthly", "Quarterly", "Yearly"],
+        datasets: [{
+            data: [40, 35, 25],
+            backgroundColor: ["#FF5733", "#FFC300", "#007BFF"]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+//json
+async function fetchCustomers() {
+    try {
+        const response = await fetch("http://localhost:3000/customers");
+        const customers = await response.json();
+
+        const tableBody = document.getElementById("userTable");
+        tableBody.innerHTML = ""; // Clear existing rows
+
+        customers.forEach(customer => {
+            const row = document.createElement("tr");
+
+            // Store customer details in data attributes
+            row.dataset.customerId = customer.customerId;
+            row.dataset.customerName = customer.name;
+            row.dataset.customerMobile = customer.mobile;
+
+            row.innerHTML = `
+                <td>${customer.customerId}</td>
+                <td>${customer.name}</td>
+                <td>${customer.email}</td>
+                <td>${customer.mobile}</td>
+                <td><span class="badge ${customer.accountStatus === 'Active' ? 'badge-active' : 'badge-inactive'}">${customer.accountStatus}</span></td>
+            `;
+
+            // Attach event listener for row click
+            row.addEventListener("click", function () {
+                showHistory(this.dataset.customerId, this.dataset.customerName, this.dataset.customerMobile);
+            });
+
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
+
+// Fetch data when page loads
+window.onload = fetchCustomers;
+function showHistory(customerId) {
+    fetch("http://localhost:3000/customers")
+        .then(response => response.json())
+        .then(customers => {
+            const customer = customers.find(c => c.customerId === customerId);
+            if (!customer) {
+                console.error("Customer not found.");
+                return;
+            }
+
+            // Update modal title and customer details
+            document.getElementById("customerName").textContent = customer.name;
+            document.getElementById("customerMobile").textContent = customer.mobile;
+
+            // Get history table body
+            const historyTable = document.getElementById("historyTable");
+            historyTable.innerHTML = ""; // Clear previous data
+
+            // Populate table with recharge history
+            customer.rechargeHistory.forEach(history => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${history.rechargeDate}</td>
+                    <td>${history.title}</td>
+                    <td>₹${history.price}</td>
+                    <td>${new Date(history.expiryDate) > new Date() ? "Active" : "Expired"}</td>
+                `;
+                historyTable.appendChild(row);
+            });
+
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById("historyModal"));
+            modal.show();
+        })
+        .catch(error => console.error("Error fetching recharge history:", error));
+}
+
+// Example usage: Call showHistory("CUST1001") when needed
+
+
+
+    </script>
+
+</body>
+</html>

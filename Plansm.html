@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+      * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ✅ Prevents horizontal scroll */
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: #F5F7FA;
+            color: #333;
+            
+        }
+
+        /* ✅ Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #007BFF;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            transition: width 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar.minimized {
+            width: 80px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: #0056b3;
+        }
+        .sidebar a i {
+            font-size: 22px;
+            color: white;
+        }
+        .sidebar a span {
+            margin-left: 15px;
+            transition: opacity 0.3s;
+        }
+        .sidebar.minimized a span {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .admin-profile {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .admin-profile img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        .sidebar.minimized .admin-profile img {
+            display: none;
+        }
+
+        /* ✅ Toggle Button */
+        .toggle-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #0056b3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 20px auto;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .toggle-button i {
+            transition: transform 0.3s;
+            color: white;
+        }
+        .sidebar.minimized .toggle-button i {
+            transform: rotate(180deg);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            flex-grow: 1;
+            background: #ffffff;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            width: calc(100% - 250px);
+        }
+        .sidebar.minimized + .main-content {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+
+/* ✅ Fix for Large Screens (992px and above) */
+@media (min-width: 992px) {
+    .sidebar {
+        width: 250px;
+        transition: width 0.3s ease-in-out;
+    }
+
+    .sidebar.minimized {
+        width: 80px;
+    }
+
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+    }
+
+    .sidebar.minimized + .main-content {
+        margin-left: 80px;
+        width: calc(100% - 80px); /* ✅ Adjust width dynamically */
+    }
+}
+
+
+.top-bar {
+            background: #ffffff;
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .top-bar .icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .top-bar .icons i {
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #007BFF;
+            transition: color 0.3s;
+        }
+        .top-bar .icons i:hover {
+            color: #0056b3;
+        }
+
+ 
+        @media (max-width: 768px) {
+          
+           
+            .search-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        @media (max-width: 992px) {
+    .sidebar {
+        display: none; /* Hide regular sidebar */
+    }
+    .main-content {
+        margin-left: 0; /* Full width content */
+        width: 100%;
+    }
+   
+}
+
+
+/* ✅ Make Offcanvas Sidebar Smaller */
+.custom-offcanvas {
+            width: 250px !important;
+            background: #007BFF;
+            color: white;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .custom-offcanvas .offcanvas-header {
+            background: #0056b3;
+            color: white;
+        }
+        .custom-offcanvas .offcanvas-body a {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .custom-offcanvas .offcanvas-body a:hover {
+            background: #004494;
+        }
+
+        /* ✅ Table Styling */
+        .table-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            overflow-x: auto; /* ✅ Makes table scrollable */
+        }
+        .table th {
+            background: #007BFF;
+            color: white;
+        }
+        .table-hover tbody tr:hover {
+            background: #f8f9fa;
+            transition: background 0.3s;
+        }
+        .form-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            display: none; /* Forms are hidden initially */
+        }
+        .form-container h4 {
+            margin-bottom: 15px;
+        }
+
+    
+    </style>
+</head>
+<body>
+
+    <!-- ✅ Sidebar -->
+    <div class="sidebar d-none d-lg-flex" id="sidebar">
+        <div class="admin-profile">
+            <img src="https://via.placeholder.com/80" alt="Admin Photo">
+            <h5>Admin Name</h5>
+        </div>
+        <a href="admin.html" ><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+        <a href="Users.html"><i class="bi bi-people"></i> <span>Users</span></a>
+        <a href="Plansm.html" class="active"><i class="bi bi-card-list"></i> <span>Plans</span></a>
+        <a href="transactions.html"><i class="bi bi-currency-exchange"></i> <span>Transactions</span></a>
+        <div class="toggle-button" onclick="toggleSidebar()">
+            <i class="bi bi-chevron-left"></i>
+        </div>
+    </div>
+    
+    <!-- Offcanvas Sidebar for Small Screens -->
+    <!-- Offcanvas Sidebar for Small Screens -->
+    <div class="offcanvas offcanvas-start custom-offcanvas" tabindex="-1" id="mobileSidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <a href="admin.html" ><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+            <a href="Users.html"><i class="bi bi-people"></i> <span>Users</span></a>
+            <a href="Plansm.html" class="active"><i class="bi bi-card-list"></i> <span>Plans</span></a>
+            <a href="transactions.html"><i class="bi bi-currency-exchange"></i> <span>Transactions</span></a>
+         
+        </div>
+    </div>
+    
+
+    <!-- ✅ Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="top-bar">
+            <button class="btn btn-primary d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <h2>Plan Management</h2>
+            <div class="icons">
+                <i class="bi bi-bell"></i>
+                <i class="bi bi-envelope"></i>
+                <div class="dropdown">
+                    <i class="bi bi-person-circle dropdown-toggle" data-bs-toggle="dropdown"></i>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="admin-profile.html"><i class="bi bi-person"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary mt-3" onclick="toggleForm('categoryForm')">Add Category</button>
+        <div class="form-container" id="categoryForm">
+            <h4>Add Category</h4>
+            <div class="input-group">
+                <input type="text" id="categoryName" class="form-control" placeholder="Category Name">
+                <button class="btn btn-primary" onclick="addCategory()">Add</button>
+            </div>
+        </div>
+
+        <!-- Categories Table -->
+        <div class="table-container">
+            <h4>Available Categories</h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr><th>Category ID</th><th>Name</th></tr>
+                </thead>
+                <tbody id="categoryTableBody">
+                    <!-- ✅ Data will be inserted dynamically -->
+                </tbody>
+            </table>
+        </div>
+        
+
+        <!-- Add Plan -->
+      <!-- Add Plan Button -->
+<button class="btn btn-success mt-3" onclick="toggleForm('planForm')">Add Plan</button>
+
+<!-- Plan Form -->
+<div class="form-container" id="planForm">
+    <h4>Add Plan</h4>
+      <!-- Dynamic Category & Subcategory Dropdowns -->
+      <select id="planCategory" class="form-control mb-2" onchange="populateSubcategories()">
+        <option disabled selected>Select Category</option>
+    </select>
+    
+    <select id="planSubcategory" class="form-control mb-2">
+        <option disabled selected>Select Subcategory</option>
+    </select>
+    <input type="text" id="planTitle" class="form-control mb-2" placeholder="Plan Title">
+    <input type="number" id="planPrice" class="form-control mb-2" placeholder="Price">
+    <input type="number" id="planDuration" class="form-control mb-2" placeholder="Duration (Days)">
+    <input type="text" id="planData" class="form-control mb-2" placeholder="Data (e.g., 2GB)">
+    <input type="text" id="planCalls" class="form-control mb-2" placeholder="Calls (e.g., Unlimited)">
+    <input type="number" id="planSMS" class="form-control mb-2" placeholder="SMS Count">
+    <input type="text" id="planOTT" class="form-control mb-2" placeholder="OTT Benefits (e.g., Netflix)">
+    <input type="text" id="planBenefits" class="form-control mb-2" placeholder="Other Benefits">
+    <input type="text" id="planOffer" class="form-control mb-2" placeholder="Special Offer">
+    <input type="text" id="planBadgeColor" class="form-control mb-2" placeholder="Badge Color">
+
+  
+
+    <button class="btn btn-success" onclick="addPlan()">Add Plan</button>
+</div>
+
+
+        <!-- Plans Table -->
+        <div class="table-container">
+            <h4>Available Plans</h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Plan ID</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Validity</th>
+                        <th>Data</th>
+                        <th>Calls</th>
+                        <th>SMS</th>
+                        <th>OTT</th>
+                        <th>Benefits</th>
+                        <th>Offer</th>
+                        <th>Category</th>
+                        <th>subcategory</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="planTableBody">
+                    <!-- Data will be inserted dynamically -->
+                </tbody>
+            </table>
+        </div>
+      <!-- Edit Plan Modal -->
+<div class="modal fade" id="editPlanModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editPlanId">
+                <div class="mb-2"><label>Title</label><input type="text" id="editPlanTitle" class="form-control"></div>
+                <div class="mb-2"><label>Price</label><input type="number" id="editPlanPrice" class="form-control"></div>
+                <div class="mb-2"><label>Duration</label><input type="number" id="editPlanDuration" class="form-control"></div>
+                <div class="mb-2"><label>Data</label><input type="text" id="editPlanData" class="form-control"></div>
+                <div class="mb-2"><label>Calls</label><input type="text" id="editPlanCalls" class="form-control"></div>
+                <div class="mb-2"><label>SMS</label><input type="number" id="editPlanSMS" class="form-control"></div>
+                <div class="mb-2"><label>OTT</label><input type="text" id="editPlanOTT" class="form-control"></div>
+                <div class="mb-2"><label>Benefits</label><input type="text" id="editPlanBenefits" class="form-control"></div>
+                <div class="mb-2"><label>Offer</label><input type="text" id="editPlanOffer" class="form-control"></div>
+                <div class="mb-2"><label>Badge Color</label><input type="text" id="editPlanBadgeColor" class="form-control"></div>
+                <div class="mb-2"><label>Category</label><input type="text" id="editPlanCategory" class="form-control" readonly></div>
+                <div class="mb-2"><label>Subcategory</label><input type="text" id="editPlanSubcategory" class="form-control" readonly></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="savePlanEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- ✅ Sidebar Toggle Script -->
+    <script>
+        function toggleSidebar() {
+    let sidebar = document.getElementById('sidebar');
+    let mainContent = document.getElementById('main-content');
+
+    sidebar.classList.toggle('minimized');
+
+    // ✅ Ensure main content resizes properly
+    if (sidebar.classList.contains('minimized')) {
+        mainContent.style.marginLeft = "80px";
+        mainContent.style.width = "calc(100% - 80px)";
+    } else {
+        mainContent.style.marginLeft = "250px";
+        mainContent.style.width = "calc(100% - 250px)";
+    }
+}
+
+// //json
+document.addEventListener("DOMContentLoaded", fetchCategories);
+
+function fetchCategories() {
+    fetch("http://localhost:3000/categories")
+        .then(response => response.json())
+        .then(categories => {
+            const tableBody = document.getElementById("categoryTableBody");
+            tableBody.innerHTML = ""; // Clear previous content
+
+            categories.forEach(category => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${category.id}</td>
+                    <td>${category.name}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => console.error("Error fetching categories:", error));
+}
+document.addEventListener("DOMContentLoaded", fetchAllPlans);
+
+function fetchAllPlans() {
+    fetch("http://localhost:3000/categories") // Adjust URL if needed
+        .then(response => response.json())
+        .then(categories => {
+            const tableBody = document.getElementById("planTableBody");
+            tableBody.innerHTML = ""; // Clear previous content
+
+            categories.forEach(category => {
+                category.subcategories.forEach(subcategory => {
+                    subcategory.plans.forEach(plan => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${plan.id}</td>
+                            <td>${plan.title}</td>
+                            <td>₹${plan.price}</td>
+                            <td>${plan.duration} Days</td>
+                            <td>${plan.data}</td>
+                            <td>${plan.calls}</td>
+                            <td>${plan.sms}</td>
+                            <td>${plan.ott}</td>
+                            <td>${plan.benefits}</td>
+                            <td><span class="badge bg-${plan.badgeColor}">${plan.offer}</span></td>
+                            <td>${category.name}</td>
+                            <td>${subcategory.name}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editPlan(
+                                    '${plan.id}', '${plan.title}', ${plan.price}, ${plan.duration}, 
+                                    '${plan.data}', '${plan.calls}', ${plan.sms}, '${plan.ott}', 
+                                    '${plan.benefits}', '${plan.offer}', '${plan.badgeColor}', 
+                                    '${category.name}', '${subcategory.name}'
+                                )">Edit</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+            });
+        })
+        .catch(error => console.error("Error fetching plans:", error));
+}
+function editPlan(id, title, price, duration, data, calls, sms, ott, benefits, offer, badgeColor, category, subcategory) {
+    console.log("Edit button clicked!"); // ✅ Debugging log
+
+    // Check if modal exists
+    let modalElement = document.getElementById("editPlanModal");
+    if (!modalElement) {
+        console.error("Error: Modal element not found!");
+        return;
+    }
+
+    // ✅ Fill form fields with plan details
+    document.getElementById("editPlanId").value = id;
+    document.getElementById("editPlanTitle").value = title;
+    document.getElementById("editPlanPrice").value = price;
+    document.getElementById("editPlanDuration").value = duration;
+    document.getElementById("editPlanData").value = data;
+    document.getElementById("editPlanCalls").value = calls;
+    document.getElementById("editPlanSMS").value = sms;
+    document.getElementById("editPlanOTT").value = ott;
+    document.getElementById("editPlanBenefits").value = benefits;
+    document.getElementById("editPlanOffer").value = offer;
+    document.getElementById("editPlanBadgeColor").value = badgeColor;
+    document.getElementById("editPlanCategory").value = category;
+    document.getElementById("editPlanSubcategory").value = subcategory;
+
+    // ✅ Show Bootstrap modal properly
+    let modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+
+function savePlanEdit() {
+    const planId = document.getElementById("editPlanId").value;
+    const updatedPlan = {
+        id: planId,
+        title: document.getElementById("editPlanTitle").value,
+        price: parseFloat(document.getElementById("editPlanPrice").value),
+        duration: parseInt(document.getElementById("editPlanDuration").value),
+        data: document.getElementById("editPlanData").value,
+        calls: document.getElementById("editPlanCalls").value,
+        sms: parseInt(document.getElementById("editPlanSMS").value),
+        ott: document.getElementById("editPlanOTT").value,
+        benefits: document.getElementById("editPlanBenefits").value,
+        offer: document.getElementById("editPlanOffer").value,
+        badgeColor: document.getElementById("editPlanBadgeColor").value
+    };
+
+    const categoryName = document.getElementById("editPlanCategory").value;
+    const subcategoryName = document.getElementById("editPlanSubcategory").value;
+
+    // Fetch the category where the plan exists
+    fetch(`http://localhost:3000/categories`)
+        .then(response => response.json())
+        .then(categories => {
+            let categoryToUpdate = categories.find(cat => cat.name === categoryName);
+            if (!categoryToUpdate) {
+                throw new Error("Category not found");
+            }
+
+            let subcategoryToUpdate = categoryToUpdate.subcategories.find(sub => sub.name === subcategoryName);
+            if (!subcategoryToUpdate) {
+                throw new Error("Subcategory not found");
+            }
+
+            // Find the plan inside subcategory
+            let planIndex = subcategoryToUpdate.plans.findIndex(p => p.id === planId);
+            if (planIndex === -1) {
+                throw new Error("Plan not found");
+            }
+
+            // Update the plan details in the nested structure
+            subcategoryToUpdate.plans[planIndex] = updatedPlan;
+
+            // Send updated category back to JSON server
+            return fetch(`http://localhost:3000/categories/${categoryToUpdate.id}`, {
+                method: "PUT", // Update the entire category
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(categoryToUpdate)
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to update plan");
+            }
+            return response.json();
+        })
+        .then(() => {
+            console.log("Plan updated successfully!");
+            fetchAllPlans(); // Refresh the table dynamically
+            new bootstrap.Modal(document.getElementById("editPlanModal")).hide();
+        })
+        .catch(error => console.error("Error updating plan:", error));
+}
+function toggleForm(formId) {
+    let form = document.getElementById(formId);
+    form.style.display = form.style.display === "none" ? "block" : "none";
+}
+
+// ✅ Fetch Categories & Populate Dropdowns
+document.addEventListener("DOMContentLoaded", fetchCategories);
+
+function fetchCategories() {
+    fetch("http://localhost:3000/categories")
+        .then(response => response.json())
+        .then(categories => {
+            let categoryDropdown = document.getElementById("planCategory");
+            categoryDropdown.innerHTML = `<option disabled selected>Select Category</option>`; // Reset dropdown
+
+            categories.forEach(category => {
+                let option = document.createElement("option");
+                option.value = category.id;
+                option.textContent = category.name;
+                categoryDropdown.appendChild(option);
+            });
+        })
+        .catch(error => console.error("Error fetching categories:", error));
+}
+
+// ✅ Populate Subcategories Based on Selected Category
+function populateSubcategories() {
+    let categoryId = document.getElementById("planCategory").value;
+    let subcategoryDropdown = document.getElementById("planSubcategory");
+
+    subcategoryDropdown.innerHTML = `<option disabled selected>Select Subcategory</option>`; // Reset subcategory dropdown
+
+    fetch("http://localhost:3000/categories")
+        .then(response => response.json())
+        .then(categories => {
+            let selectedCategory = categories.find(cat => cat.id === categoryId);
+            if (selectedCategory) {
+                selectedCategory.subcategories.forEach(subcategory => {
+                    let option = document.createElement("option");
+                    option.value = subcategory.id;
+                    option.textContent = subcategory.name;
+                    subcategoryDropdown.appendChild(option);
+                });
+            }
+        })
+        .catch(error => console.error("Error fetching subcategories:", error));
+}
+function addPlan() {
+    let plan = {
+        id: `plan_${Date.now()}`, // Unique ID
+        title: document.getElementById("planTitle").value.trim(),
+        price: parseFloat(document.getElementById("planPrice").value),
+        duration: parseInt(document.getElementById("planDuration").value),
+        data: document.getElementById("planData").value.trim(),
+        calls: document.getElementById("planCalls").value.trim(),
+        sms: parseInt(document.getElementById("planSMS").value),
+        ott: document.getElementById("planOTT").value.trim(),
+        benefits: document.getElementById("planBenefits").value.trim(),
+        offer: document.getElementById("planOffer").value.trim(),
+        badgeColor: document.getElementById("planBadgeColor").value.trim()
+    };
+
+    let categoryId = document.getElementById("planCategory").value;
+    let subcategoryId = document.getElementById("planSubcategory").value;
+
+    // ✅ Fetch category & subcategory to update
+    fetch(`http://localhost:3000/categories`)
+        .then(response => response.json())
+        .then(categories => {
+            let categoryToUpdate = categories.find(cat => cat.id === categoryId);
+            if (!categoryToUpdate) throw new Error("Category not found");
+
+            let subcategoryToUpdate = categoryToUpdate.subcategories.find(sub => sub.id === subcategoryId);
+            if (!subcategoryToUpdate) throw new Error("Subcategory not found");
+
+            subcategoryToUpdate.plans.push(plan); // ✅ Add new plan
+
+            return fetch(`http://localhost:3000/categories/${categoryId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(categoryToUpdate)
+            });
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to add plan");
+            return response.json();
+        })
+        .then(() => {
+            console.log("Plan added successfully!");
+            fetchAllPlans(); // ✅ Refresh table
+            toggleForm('planForm'); // ✅ Hide form
+        })
+        .catch(error => console.error("Error adding plan:", error));
+}
+
+
+    </script>
+
+</body>
+</html>
