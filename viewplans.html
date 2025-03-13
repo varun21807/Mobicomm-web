@@ -35,9 +35,11 @@
                     </div>
                 </div>
             </nav>
+          
         </div>
         
-      
+ 
+        
       
         <!-- My Account Icon (No Blur) -->
         <div class="account-icon">
@@ -50,13 +52,54 @@
         </div>
         
               </header>
+              
+              <div class="container-fluid mt-2 d-flex justify-content-end">
+                <button class="btn filter-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterCanvas" aria-controls="filterCanvas">
+                    <i class="fas fa-sliders-h"></i> Filter
+                </button>
+            </div>
+            
+            
+            <div class="offcanvas offcanvas-end " tabindex="-1" id="filterCanvas" aria-labelledby="filterCanvasLabel" style="visibility: visible;">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="filterCanvasLabel">Filter Plans</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <p class="fw-bold">Select Plan Category</p>
+                    <ul class="list-group" id="filterOptions">
+                        <li class="list-group-item"><input type="checkbox" value="popular_plans"> Popular Plans</li>
+                        <li class="list-group-item"><input type="checkbox" value="true_5g_unlimited"> True 5G Unlimited</li>
+                        <li class="list-group-item"><input type="checkbox" value="entertainment_plans"> Entertainment Plans</li>
+                        <li class="list-group-item"><input type="checkbox" value="annual_plans"> Annual Plans</li>
+                        <li class="list-group-item"><input type="checkbox" value="phone_plans"> Phone Plans</li>
+                        <li class="list-group-item"><input type="checkbox" value="isd_plans"> ISD Plans</li>
+                        <li class="list-group-item"><input type="checkbox" value="data_packs"> Data Packs</li>
+                    </ul>
+                    
+                    <p class="fw-bold mt-3">Filter by Price</p>
+                    <input type="range" id="priceRange" class="form-range" min="0" max="5000" step="100" oninput="updatePriceValue(this.value)">
+                    <p id="priceValue" class="text-center">₹0 - ₹5000</p>
+                    
+                    <p class="fw-bold mt-3">Filter by Data</p>
+                    <input type="number" id="minData" class="form-control mb-2" placeholder="Min Data (GB)">
+                    <input type="number" id="maxData" class="form-control mb-2" placeholder="Max Data (GB)">
+                    
+                    <p class="fw-bold mt-3">Filter by Validity</p>
+                    <input type="number" id="minValidity" class="form-control mb-2" placeholder="Min Validity (Days)">
+                    <input type="number" id="maxValidity" class="form-control mb-2" placeholder="Max Validity (Days)">
+                    
+                    <button class="btn btn-primary mt-3 w-100" onclick="applyFilters()">Apply Filter</button>
+                </div>
+            </div>
+            
 
-
-              <section style="margin-top: 80px;">
+              <section >
+                
                 <div class="container-fluid pb-5">
                      <div class="row">
                          <!-- Sidebar (Left Navigation) -->
-                         <div class="col-md-3 col-lg-2 sidebar p-3 mt-3">
+                         <div class="col-md-3 col-lg-2 sidebar p-3">
                             <p class="fw-bolder pt-2 pb-2 sidebar-heading" style="font-size: x-large;color: yellow;">Plan Category</p>
                             <div class="nav-container">
                                 <ul class="nav nav-pills flex-nowrap" id="planTabs"></ul>
@@ -154,7 +197,55 @@
     <script src="script.js"></script>
     <script src="json.js"></script>
 
-
+   
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let filterButton = document.querySelector('[data-bs-target="#filterCanvas"]');
+        if (filterButton) {
+            filterButton.classList.remove("d-lg-none");
+            filterButton.classList.add("d-block");
+        }
+    });
+    
+    function updatePriceValue(value) {
+        document.getElementById("priceValue").innerText = `₹0 - ₹${value}`;
+    }
+    
+    function applyFilters() {
+        let selectedFilters = [];
+        document.querySelectorAll('#filterOptions input:checked').forEach(checkbox => {
+            selectedFilters.push(checkbox.value);
+        });
+        
+        let maxPrice = document.getElementById('priceRange').value || Infinity;
+        let minData = document.getElementById('minData').value || 0;
+        let maxData = document.getElementById('maxData').value || Infinity;
+        let minValidity = document.getElementById('minValidity').value || 0;
+        let maxValidity = document.getElementById('maxValidity').value || Infinity;
+        
+        document.querySelectorAll('.tab-content > div').forEach(section => {
+            let plans = section.querySelectorAll('.plan-card');
+            plans.forEach(plan => {
+                let price = parseFloat(plan.getAttribute('data-price')) || 0;
+                let data = parseFloat(plan.getAttribute('data-data')) || 0;
+                let validity = parseFloat(plan.getAttribute('data-validity')) || 0;
+                
+                let matchesPrice = price <= maxPrice;
+                let matchesData = data >= minData && data <= maxData;
+                let matchesValidity = validity >= minValidity && validity <= maxValidity;
+                let matchesCategory = selectedFilters.length === 0 || selectedFilters.includes(section.id);
+                
+                if (matchesPrice && matchesData && matchesValidity && matchesCategory) {
+                    plan.style.display = 'block';
+                } else {
+                    plan.style.display = 'none';
+                }
+            });
+        });
+    }
+    </script>
+    
+        
 
     
     

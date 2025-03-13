@@ -232,7 +232,7 @@ h1, h2, h3, h4, h5, h6 {
     color: white;
     font-size: 1.5rem;
     cursor: pointer;
-    z-index: 1100;
+    z-index: 900;
 }
   .banner{
     height: auto;
@@ -466,6 +466,7 @@ animation-fill-mode: backwards;
     height: 550px;
     backdrop-filter: blur(10px);
     padding: 15px;
+    margin-top: 0px !important;
 }
 
 .sidebar .nav-link {
@@ -846,7 +847,7 @@ animation-fill-mode: backwards;
 .buy-now-btn {
     flex: 1;
     margin: 2px;
-    padding: 6px 6px;
+    padding: 6px 12px;
     font-size: 14px;
     border-radius: 8px;
     transition: all 0.3s ease-in-out;
@@ -1121,6 +1122,28 @@ animation-fill-mode: backwards;
     min-height: 100vh; /* Ensures it covers the full viewport */
 }
 
+.filter-btn {
+    background-color: white;
+    color: #002F87; /* Dark Blue */
+    font-weight: bold;
+    border: 2px solid #002F87;
+    border-radius: 30px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 75px;
+margin-bottom: 0px !important;
+}
+
+.filter-btn i {
+    font-size: 18px;
+}
+
+.filter-btn:hover {
+    background-color: #002F87;
+    color: white;
+}
 
 
 
