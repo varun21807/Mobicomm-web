@@ -1,25 +1,23 @@
 package com.mobicomm.app.model;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Table(name = "admin")
-@Data
-@AllArgsConstructor
+@Table(name = "admin")  // ✅ Make sure the table name is correct
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Admin {
 
     @Id
-    @Column(name = "admin_id", nullable = false, unique = true)
-    private String adminId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // ✅ Auto-increment with primary key
+    private Long id;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 }

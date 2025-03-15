@@ -54,6 +54,9 @@ public class SubcategoryService {
                 .orElseThrow(() -> new RuntimeException("Category with ID " + categoryId + " does not exist!"));
 
         subcategory.setCategory(category); // Ensure valid category reference
+        if (subcategory.getStatus() == null) {
+            subcategory.setStatus(Status.ACTIVE);
+        }
         return subcategoryRepository.save(subcategory);
     }
     public Subcategory updateSubcategory(String subcategoryId, Subcategory updatedSubcategory) {

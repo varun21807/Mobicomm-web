@@ -49,6 +49,9 @@ public class CategoryService {
 
     public Category addCategory(Category category) {
         category.setCategoryId(generateCategoryId()); // ✅ Assign generated ID before saving
+        if (category.getStatus() == null) {
+            category.setStatus(Status.ACTIVE);
+        }
         return categoryRepository.save(category);
     }
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/plans")
 public class PlanController {
@@ -40,12 +41,13 @@ public class PlanController {
         planService.deletePlan(id);
     }
     @PutMapping("/{id}/deactivate")
-    public void deactivatePlan(@PathVariable String planId) {
-        planService.deactivatePlan(planId);
+    public void deactivatePlan(@PathVariable String id) {  // ✅ Use `id`
+        planService.deactivatePlan(id);
     }
 
     @PutMapping("/{id}/activate")
-    public void activatePlan(@PathVariable String planId) {
-        planService.activatePlan(planId);
+    public void activatePlan(@PathVariable String id) {  // ✅ Use `id`
+        planService.activatePlan(id);
     }
+
 }
