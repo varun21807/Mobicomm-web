@@ -109,23 +109,50 @@
             <a href="#" class="forgot-password">Forgot Password?</a>
         </form>
     </div>
-
     <script>
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevent form from submitting normally
+  
+      document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Prevent default form submission
 
-            let email = document.getElementById("email").value;
-            let password = document.getElementById("password").value;
+    // Get input values
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-            // Simulated login check (Replace with actual authentication)
-            if (email === "admin@example.com" && password === "Test@123") {
-                alert("Login Successful! Redirecting...");
-                window.location.href = "admin.html"; // Redirects to admin page
-            } else {
-                alert("Invalid email or password! Please try again.");
-            }
+    if (!email || !password) {
+        alert("Please enter both email and password.");
+        return;
+    }
+
+    try {
+        // ✅ Send login request to the backend
+        const response = await fetch("http://localhost:8081/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password })
         });
-    </script>
 
+        // ✅ Handle response
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem("accessToken", data.accessToken);  // Store JWT access token
+            localStorage.setItem("refreshToken", data.refreshToken); // Store refresh token
+
+            alert("Login Successful!"); 
+            window.location.href = "admin.html"; // Redirect to dashboard
+        } else {
+            const errorMessage = await response.json();
+            alert("Login Failed: " + (errorMessage.message || "Invalid credentials"));
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong. Please try again.");
+    }
+});
+
+        </script>
+        
+   
 </body>
 </html>

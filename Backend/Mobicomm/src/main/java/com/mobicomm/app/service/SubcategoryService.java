@@ -25,18 +25,29 @@ public class SubcategoryService {
     @Autowired
     private PlanRepository planRepository;
 
-    // ✅ Generate next subcategory ID in format "sub_1", "sub_2"
-    private String generateSubcategoryId() {
-        Subcategory lastSubcategory = subcategoryRepository.findTopByOrderBySubcategoryIdDesc();
-        
-        if (lastSubcategory != null) {
-            String lastId = lastSubcategory.getSubcategoryId(); // e.g., "sub_10"
-            int lastNumber = Integer.parseInt(lastId.replace("sub_", "")); // Extract numeric part
-            return "sub_" + (lastNumber + 1); // Generate new ID
-        } else {
-            return "sub_1"; // First record
+
+    // Method to generate Subcategory ID in the format MCS-0001
+    public String generateSubcategoryId() {
+        // Fetch the latest subcategory entry in descending order
+        Subcategory latestSubcategory = subcategoryRepository.findTopByOrderBySubcategoryIdDesc();
+
+        // Default to 1 if no subcategories exist
+        int nextId = 1;
+        if (latestSubcategory != null) {
+            String latestSubcategoryId = latestSubcategory.getSubcategoryId(); // Expected format: MCS-XXXX
+            String numberPart = latestSubcategoryId.substring(4); // Extract numeric part
+
+            try {
+                nextId = Integer.parseInt(numberPart) + 1; // Increment number part
+            } catch (NumberFormatException e) {
+                nextId = 1;
+            }
         }
+
+        // Generate the new Subcategory ID
+        return String.format("MCS-%04d", nextId);
     }
+
 
     public List<Subcategory> getAllSubcategories() {
         return subcategoryRepository.findAll();

@@ -1,28 +1,22 @@
 package com.mobicomm.app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "addresses")
+@Table(name = "address")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public  class Address {
-    @Id
-    @Column(name="address_id")
-    private String newUserId;
-    
+public class Address {
+	 @Id
+	    private String addressId;
+	 
     private String street;
+    
+    private String state;
     
     private String city;
     
@@ -37,5 +31,9 @@ public  class Address {
     @ManyToOne
     @JoinColumn(name = "new_user_id", referencedColumnName = "new_user_id", nullable = true)
     private NewUser newUser;
+    
+    @ManyToOne
+    @JoinColumn(name = "admin_id", referencedColumnName = "admin_id", nullable = true)
+    private Admin admin;
+    
 }
-

@@ -27,21 +27,29 @@ public class PlanService {
     
     @Autowired
     private OttRepository ottRepository;
+    
+    public String generatePlanId() {
+        // Fetch the latest plan entry based on descending order of ID
+        Plan latestPlan = planRepository.findTopByOrderByPlanIdDesc();
 
+        // Default to 1 if no plans exist
+        int nextId = 1;  
+        if (latestPlan != null) {
+            String latestPlanId = latestPlan.getPlanId(); // Expected format: MCP-XXXX
+            String numberPart = latestPlanId.substring(4); // Extract numeric part
 
-    // ✅ Generate next plan ID in format "pl_1", "pl_2", "pl_3"
-    private String generatePlanId() {
-        Optional<Plan> lastPlan = planRepository.findTopByOrderByPlanIdDesc();
-        
-        if (lastPlan.isPresent()) {
-            String lastId = lastPlan.get().getPlanId(); // e.g., "pl_10"
-            int lastNumber = Integer.parseInt(lastId.replace("pl_", "")); // Extract numeric part
-            return "pl_" + (lastNumber + 1); // Generate new ID
-        } else {
-            return "pl_1"; // First record
+            try {
+                nextId = Integer.parseInt(numberPart) + 1; // Increment number part
+            } catch (NumberFormatException e) {
+                nextId = 1;
+            }
         }
+
+        // Generate the new Plan ID
+        return String.format("MCP-%04d", nextId);
     }
 
+    
     public List<Plan> getAllPlans() {
         return planRepository.findAll();
     }
@@ -60,21 +68,25 @@ public class PlanService {
 
 
     public Plan updatePlan(String planId, Plan updatedPlan) {
-        return planRepository.findById(planId)
-            .map(existingPlan -> {
-                existingPlan.setPlanName(updatedPlan.getPlanName());
-                existingPlan.setPrice(updatedPlan.getPrice());
-                existingPlan.setDuration(updatedPlan.getDuration());
-                existingPlan.setData(updatedPlan.getData());
-                existingPlan.setCalls(updatedPlan.getCalls());
-                existingPlan.setSms(updatedPlan.getSms());
-                existingPlan.setBenefits(updatedPlan.getBenefits());
-                existingPlan.setOffer(updatedPlan.getOffer());
-                existingPlan.setBadgeColor(updatedPlan.getBadgeColor());
-                existingPlan.setPlanStatus(updatedPlan.getPlanStatus());
-                return planRepository.save(existingPlan);
-            })
-            .orElseThrow(() -> new RuntimeException("Plan not found with ID: " + planId));
+        Plan existingPlan = planRepository.findById(planId)
+                .orElseThrow(() -> new RuntimeException("Plan not found"));
+
+        existingPlan.setPlanName(updatedPlan.getPlanName());
+        existingPlan.setPrice(updatedPlan.getPrice());
+        existingPlan.setDuration(updatedPlan.getDuration());
+        existingPlan.setData(updatedPlan.getData());
+        existingPlan.setCalls(updatedPlan.getCalls());
+        existingPlan.setSms(updatedPlan.getSms());
+        existingPlan.setBenefits(updatedPlan.getBenefits());
+        existingPlan.setOffer(updatedPlan.getOffer());
+        existingPlan.setBadgeColor(updatedPlan.getBadgeColor());
+        existingPlan.setSubcategory(updatedPlan.getSubcategory());
+
+        // ✅ Ensure OTTs are correctly updated
+        existingPlan.getOttPlatforms().clear();
+        existingPlan.getOttPlatforms().addAll(updatedPlan.getOttPlatforms());
+
+        return planRepository.save(existingPlan);
     }
 
     public void deletePlan(String planId) {

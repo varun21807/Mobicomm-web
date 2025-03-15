@@ -25,20 +25,27 @@ public class CategoryService {
     
     @Autowired
     private SubcategoryRepository subcategoryRepository;
+ // Method to generate Category ID in the format MCC-0001
+    public String generateCategoryId() {
+        // Fetch the latest category entry based on descending order of ID
+        Category latestCategory = categoryRepository.findTopByOrderByCategoryIdDesc();
 
-    // ✅ Generate next category ID in format "cat_1", "cat_2"
-    private String generateCategoryId() {
-        Category lastCategory = categoryRepository.findTopByOrderByCategoryIdDesc();
-        
-        if (lastCategory != null) {
-            String lastId = lastCategory.getCategoryId(); // e.g., "cat_10"
-            int lastNumber = Integer.parseInt(lastId.replace("cat_", "")); // Extract numeric part
-            return "cat_" + (lastNumber + 1); // Generate new ID
-        } else {
-            return "cat_1"; // First record
+        // Default to 1 if no categories exist
+        int nextId = 1;  
+        if (latestCategory != null) {
+            String latestCategoryId = latestCategory.getCategoryId(); // Expected format: MCC-XXXX
+            String numberPart = latestCategoryId.substring(4); // Extract numeric part
+
+            try {
+                nextId = Integer.parseInt(numberPart) + 1; // Increment number part
+            } catch (NumberFormatException e) {
+                nextId = 1;
+            }
         }
-    }
 
+        // Generate the new Category ID
+        return String.format("MCC-%04d", nextId);
+    }
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }

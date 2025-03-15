@@ -536,8 +536,69 @@
         </div>
     </div>
 </div>
+
+
+<div class="container">
+    <h2 class="text-center mb-4">OTT Platform Management</h2>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addOttModal">
+        <i class="fas fa-plus"></i> Add OTT
+    </button>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>OTT Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="ottTableBody">
+            <!-- Data will be populated dynamically -->
+        </tbody>
+    </table>
+</div>
  <!-- Add Plan -->
-   
+   <!-- 🔹 Add OTT Modal -->
+<div class="modal fade" id="addOttModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New OTT Platform</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label for="ottName" class="form-label">OTT Name</label>
+                <input type="text" id="ottName" class="form-control" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addOtt()">Add OTT</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🔹 Edit OTT Modal -->
+<div class="modal fade" id="editOttModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit OTT Platform</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editOttId">
+                <label for="editOttName" class="form-label">OTT Name</label>
+                <input type="text" id="editOttName" class="form-control" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveOttEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
    <!-- Add Plan Button -->
    <button class="btn btn-success mt-3" onclick="toggleForm('planForm')">Add Plan</button>
@@ -776,159 +837,185 @@ function toggleDropdown(dropdownId) {
 }
 
 
-function fetchCategories(selectedCategoryId = "") {
-    fetch("http://localhost:8081/api/categories")
-        .then(response => response.json())
-        .then(categories => {
-            // ✅ Get all necessary elements
-            const tableBody = document.getElementById("categoryTableBody");
-            const categorySelect = document.getElementById("categorySelect");
-            const editCategorySelect = document.getElementById("editCategorySelect");
-            const categoryFilterList = document.getElementById("categoryFilterList");
-            const planCategory = document.getElementById("planCategory");
-            const editPlanCategory = document.getElementById("editPlanCategory");
-            const categoryFilterDropdown = document.getElementById("categoryFilterDropdown");
-
-            // ✅ Check if elements exist in the DOM
-            if (!tableBody || !categorySelect || !editCategorySelect || !categoryFilterList || 
-                !planCategory || !editPlanCategory || !categoryFilterDropdown) {
-                console.error("One or more elements are missing in the DOM.");
-                return;
-            }
-
-            // ✅ Reset dropdowns & lists
-            tableBody.innerHTML = "";
-            categorySelect.innerHTML = '<option value="">Select Category</option>';
-            editCategorySelect.innerHTML = '<option value="">Select Category</option>';
-            categoryFilterList.innerHTML = '<li onclick="fetchSubcategories()">All Categories</li>';
-            planCategory.innerHTML = '<option disabled selected>Select Category</option>';
-            editPlanCategory.innerHTML = '<option disabled selected>Select Category</option>';
-            categoryFilterDropdown.innerHTML = '<li onclick="fetchSubcategories()">All Categories</li>';
-
-            // ✅ Create DocumentFragment for better performance
-            const categoryOptions = document.createDocumentFragment();
-            const editCategoryOptions = document.createDocumentFragment();
-            const planCategoryOptions = document.createDocumentFragment();
-            const editPlanCategoryOptions = document.createDocumentFragment();
-            const filterListItems = document.createDocumentFragment();
-            const filterDropdownItems = document.createDocumentFragment();
-
-            categories.forEach(category => {
-                // ✅ Populate category table
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${category.categoryId}</td>
-                    <td>${category.name}</td>
-                    <td>
-                        <button class="btn ${category.status === 'ACTIVE' ? 'btn-danger' : 'btn-success'} btn-sm toggle-btn"
-                            onclick="toggleStatus(this, '${category.categoryId}', '${category.status}')">
-                            ${category.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
-                        </button>
-                    </td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" onclick="openEditForm('${category.categoryId}', '${category.name}')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteCategory('${category.categoryId}')">Delete</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-
-                // ✅ Create dropdown options
-                const option = new Option(category.name, category.categoryId);
-                categoryOptions.appendChild(option.cloneNode(true));
-                editCategoryOptions.appendChild(option.cloneNode(true));
-                planCategoryOptions.appendChild(option.cloneNode(true));
-                editPlanCategoryOptions.appendChild(option.cloneNode(true));
-
-                // ✅ Create filter list items
-                const li = document.createElement("li");
-                li.textContent = category.name;
-                li.onclick = () => fetchSubcategories(category.categoryId);
-                filterListItems.appendChild(li.cloneNode(true));
-                filterDropdownItems.appendChild(li.cloneNode(true));
-            });
-
-            // ✅ Append all elements at once
-            categorySelect.appendChild(categoryOptions);
-            editCategorySelect.appendChild(editCategoryOptions);
-            planCategory.appendChild(planCategoryOptions);
-            editPlanCategory.appendChild(editPlanCategoryOptions);
-            categoryFilterList.appendChild(filterListItems);
-            categoryFilterDropdown.appendChild(filterDropdownItems);
-
-            // ✅ Pre-select category for editing
-            if (selectedCategoryId) {
-                planCategory.value = selectedCategoryId;
-                editPlanCategory.value = selectedCategoryId;
-                fetchSubcategories(selectedCategoryId);
-            }
-        })
-        .catch(error => console.error("Error fetching categories:", error));
+// ✅ Global function to get the token
+function getToken() {
+    return localStorage.getItem("accessToken");
 }
-function toggleStatus(button, categoryId, currentStatus) {
+
+// ✅ Handle unauthorized (401) errors
+function handleUnauthorized(response) {
+    if (response.status === 401) {
+        alert("Session expired! Please log in again.");
+        localStorage.removeItem("accessToken"); // Clear token
+        window.location.href = "login.html"; // Redirect to login
+    }
+}
+
+// ✅ Fetch all categories
+function fetchCategories(selectedCategoryId = "") {
+    const token = getToken();
+
+    fetch("http://localhost:8081/api/categories", {
+        headers: {
+            "Authorization": token ? `Bearer ${token}` : "", // Attach token if available
+        }
+    })
+    .then(response => {
+        if (!response.ok) handleUnauthorized(response);
+        return response.json();
+    })
+    .then(categories => {
+        const tableBody = document.getElementById("categoryTableBody");
+        const categorySelect = document.getElementById("categorySelect");
+        const editCategorySelect = document.getElementById("editCategorySelect");
+        const categoryFilterList = document.getElementById("categoryFilterList");
+        const planCategory = document.getElementById("planCategory");
+        const editPlanCategory = document.getElementById("editPlanCategory");
+        const categoryFilterDropdown = document.getElementById("categoryFilterDropdown");
+
+        if (!tableBody || !categorySelect || !editCategorySelect || !categoryFilterList || 
+            !planCategory || !editPlanCategory || !categoryFilterDropdown) {
+            console.error("One or more elements are missing in the DOM.");
+            return;
+        }
+
+        tableBody.innerHTML = "";
+        categorySelect.innerHTML = '<option value="">Select Category</option>';
+        editCategorySelect.innerHTML = '<option value="">Select Category</option>';
+        categoryFilterList.innerHTML = '<li onclick="fetchSubcategories()">All Categories</li>';
+        planCategory.innerHTML = '<option disabled selected>Select Category</option>';
+        editPlanCategory.innerHTML = '<option disabled selected>Select Category</option>';
+        categoryFilterDropdown.innerHTML = '<li onclick="fetchSubcategories()">All Categories</li>';
+
+        const categoryOptions = document.createDocumentFragment();
+        const editCategoryOptions = document.createDocumentFragment();
+        const planCategoryOptions = document.createDocumentFragment();
+        const editPlanCategoryOptions = document.createDocumentFragment();
+        const filterListItems = document.createDocumentFragment();
+        const filterDropdownItems = document.createDocumentFragment();
+
+        categories.forEach(category => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${category.categoryId}</td>
+                <td>${category.name}</td>
+                <td>
+                   <button class="btn ${category.status === 'ACTIVE' ? 'btn-danger' : 'btn-success'} btn-sm toggle-btn"
+    onclick="toggleCategoryStatus('${category.categoryId}', '${category.status}')">
+    ${category.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
+</button>
+
+                </td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="openEditForm('${category.categoryId}', '${category.name}')">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteCategory('${category.categoryId}')">Delete</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+
+            const option = new Option(category.name, category.categoryId);
+            categoryOptions.appendChild(option.cloneNode(true));
+            editCategoryOptions.appendChild(option.cloneNode(true));
+            planCategoryOptions.appendChild(option.cloneNode(true));
+            editPlanCategoryOptions.appendChild(option.cloneNode(true));
+
+            const li = document.createElement("li");
+            li.textContent = category.name;
+            li.onclick = () => fetchSubcategories(category.categoryId);
+            filterListItems.appendChild(li.cloneNode(true));
+            filterDropdownItems.appendChild(li.cloneNode(true));
+        });
+
+        categorySelect.appendChild(categoryOptions);
+        editCategorySelect.appendChild(editCategoryOptions);
+        planCategory.appendChild(planCategoryOptions);
+        editPlanCategory.appendChild(editPlanCategoryOptions);
+        categoryFilterList.appendChild(filterListItems);
+        categoryFilterDropdown.appendChild(filterDropdownItems);
+
+        if (selectedCategoryId) {
+            planCategory.value = selectedCategoryId;
+            editPlanCategory.value = selectedCategoryId;
+            fetchSubcategories(selectedCategoryId);
+        }
+    })
+    .catch(error => console.error("Error fetching categories:", error));
+}
+function toggleCategoryStatus(categoryId, currentStatus) {
+    const token = getToken(); // ✅ Retrieve token
+    if (!token) {
+        alert("Unauthorized: Please log in again.");
+        return;
+    }
+
     const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
     const endpoint = newStatus === 'ACTIVE' ? 'activate' : 'deactivate';
 
     fetch(`http://localhost:8081/api/categories/${categoryId}/${endpoint}`, {
-        method: "PUT"
+        method: "PUT",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            handleUnauthorized(response);
+            throw new Error("Failed to update category status");
+        }
+        return response.text();
     })
     .then(() => {
-        button.textContent = newStatus === 'ACTIVE' ? "Deactivate" : "Activate";
-        button.classList.toggle("btn-danger", newStatus === 'ACTIVE');
-        button.classList.toggle("btn-success", newStatus === 'INACTIVE');
-        fetchCategories(); // Refresh table
+        alert(`Category ${newStatus.toLowerCase()}d successfully!`);
+        fetchCategories(); // ✅ Refresh categories after update
     })
     .catch(error => console.error("Error updating category status:", error));
 }
+
+// ✅ Add a new category
 function addCategory() {
+    const token = getToken();
     const categoryName = document.getElementById("categoryName").value.trim();
+
     if (!categoryName) {
         alert("Please enter a category name");
         return;
     }
 
-    const newCategory = { name: categoryName, status: "ACTIVE" };
-
     fetch("http://localhost:8081/api/categories", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newCategory)
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ name: categoryName, status: "ACTIVE" })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) handleUnauthorized(response);
+        return response.json();
+    })
     .then(() => {
         alert("Category added successfully!");
         document.getElementById("categoryName").value = "";
-        fetchCategories(); // Refresh table after adding category
+        fetchCategories();
     })
     .catch(error => console.error("Error adding category:", error));
 }
 
-function activateCategory(id) {
-    fetch(`http://localhost:8081/api/categories/${id}/activate`, {
-        method: "PUT"
-    })
-    .then(() => {
-        alert("Category activated successfully!");
-        fetchCategories();
-    })
-    .catch(error => console.error("Error activating category:", error));
-}
-
-function deactivateCategory(id) {
-    fetch(`http://localhost:8081/api/categories/${id}/deactivate`, {
-        method: "PUT"
-    })
-    .then(() => {
-        alert("Category deactivated successfully!");
-        fetchCategories();
-    })
-    .catch(error => console.error("Error deactivating category:", error));
-}
-
+// ✅ Delete a category
 function deleteCategory(id) {
     if (!confirm("Are you sure you want to delete this category?")) return;
 
+    const token = getToken();
+
     fetch(`http://localhost:8081/api/categories/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) handleUnauthorized(response);
+        return response.text();
     })
     .then(() => {
         alert("Category deleted successfully!");
@@ -937,6 +1024,7 @@ function deleteCategory(id) {
     .catch(error => console.error("Error deleting category:", error));
 }
 function openEditForm(categoryId, categoryName) {
+    // Set values in the edit form
     document.getElementById("editCategoryId").value = categoryId;
     document.getElementById("editCategoryName").value = categoryName;
     
@@ -944,9 +1032,12 @@ function openEditForm(categoryId, categoryName) {
     let editModal = new bootstrap.Modal(document.getElementById("editCategoryModal"));
     editModal.show();
 }
+
+// ✅ Update an existing category
 function updateCategory() {
     const categoryId = document.getElementById("editCategoryId").value;
     const categoryName = document.getElementById("editCategoryName").value.trim();
+    const token = getToken();
 
     if (!categoryName) {
         alert("Category name cannot be empty!");
@@ -955,66 +1046,73 @@ function updateCategory() {
 
     fetch(`http://localhost:8081/api/categories/${categoryId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: categoryName }) // Only updating name
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ name: categoryName })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) handleUnauthorized(response);
+        return response.json();
+    })
     .then(() => {
         alert("Category updated successfully!");
-        fetchCategories(); // Refresh table
-        document.querySelector("#editCategoryModal .btn-close").click(); // Close Modal
+        fetchCategories();
+        document.querySelector("#editCategoryModal .btn-close").click();
     })
     .catch(error => console.error("Error updating category:", error));
 }
 
-
-
-// Fetch all subcategories and filter if needed
-// ✅ Fetch and Populate Subcategories Based on Selected Category
+// ✅ Fetch all subcategories (filtered by category if needed)
 function fetchSubcategories(categoryId = "") {
     let url = "http://localhost:8081/api/subcategories";
     if (categoryId) url += `?category=${categoryId}`;
 
-    fetch(url)
-        .then(response => response.json())
-        .then(subcategories => {
-            const tableBody = document.getElementById("subcategoryTableBody");
-            const planSubcategory = document.getElementById("planSubcategory");
-            const editPlanSubcategory = document.getElementById("editPlanSubcategory");
+    fetch(url, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${getToken()}` }
+    })
+    .then(response => response.json())
+    .then(subcategories => {
+        const tableBody = document.getElementById("subcategoryTableBody");
+        const planSubcategory = document.getElementById("planSubcategory");
+        const editPlanSubcategory = document.getElementById("editPlanSubcategory");
 
-            // ✅ Reset table & dropdowns before adding new items
-            tableBody.innerHTML = "";
-            planSubcategory.innerHTML = '<option disabled selected>Select Subcategory</option>';
-            editPlanSubcategory.innerHTML = '<option disabled selected>Select Subcategory</option>';
+        // ✅ Reset table & dropdowns
+        tableBody.innerHTML = "";
+        planSubcategory.innerHTML = '<option disabled selected>Select Subcategory</option>';
+        editPlanSubcategory.innerHTML = '<option disabled selected>Select Subcategory</option>';
 
-            subcategories.forEach(subcategory => {
-                // ✅ Populate subcategory table
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${subcategory.subcategoryId}</td>
-                    <td>${subcategory.name}</td>
-                    <td>${subcategory.category ? subcategory.category.name : 'N/A'}</td>
-                    <td>
-                        <button class="btn ${subcategory.status === 'ACTIVE' ? 'btn-danger' : 'btn-success'} btn-sm toggle-btn"
-                            onclick="toggleSubcategoryStatus('${subcategory.subcategoryId}', '${subcategory.status}', this)">
-                            ${subcategory.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
-                        </button>
-                    </td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" onclick="openEditSubcategory('${subcategory.subcategoryId}', '${subcategory.name}', '${subcategory.category ? subcategory.category.categoryId : ''}')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteSubcategory('${subcategory.subcategoryId}')">Delete</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
+        subcategories.forEach(subcategory => {
+            // ✅ Populate subcategory table
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${subcategory.subcategoryId}</td>
+                <td>${subcategory.name}</td>
+                <td>${subcategory.category ? subcategory.category.name : 'N/A'}</td>
+                <td>
+                    <button class="btn ${subcategory.status === 'ACTIVE' ? 'btn-danger' : 'btn-success'} btn-sm toggle-btn"
+                        onclick="toggleSubcategoryStatus('${subcategory.subcategoryId}', '${subcategory.status}', this)">
+                        ${subcategory.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="openEditSubcategory('${subcategory.subcategoryId}', '${subcategory.name}', '${subcategory.category ? subcategory.category.categoryId : ''}')">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteSubcategory('${subcategory.subcategoryId}')">Delete</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
 
-                // ✅ Populate subcategory dropdowns
-                planSubcategory.innerHTML += `<option value="${subcategory.subcategoryId}">${subcategory.name}</option>`;
-                editPlanSubcategory.innerHTML += `<option value="${subcategory.subcategoryId}">${subcategory.name}</option>`;
-            });
-        })
-        .catch(error => console.error("Error fetching subcategories:", error));
+            // ✅ Populate subcategory dropdowns
+            planSubcategory.innerHTML += `<option value="${subcategory.subcategoryId}">${subcategory.name}</option>`;
+            editPlanSubcategory.innerHTML += `<option value="${subcategory.subcategoryId}">${subcategory.name}</option>`;
+        });
+    })
+    .catch(error => console.error("Error fetching subcategories:", error));
 }
 
+// ✅ Populate subcategories based on selected category
 function populateSubcategories() {
     const categoryId = document.getElementById("planCategory").value;
     if (categoryId) {
@@ -1024,15 +1122,16 @@ function populateSubcategories() {
 function deleteSubcategory(subcategoryId) {
     if (!confirm("Are you sure you want to delete this subcategory?")) return;
 
+    const token = getToken();
+
     fetch(`http://localhost:8081/api/subcategories/${subcategoryId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
     })
     .then(response => {
-        if (!response.ok) {
-            throw new Error("Failed to delete subcategory");
-        }
+        if (!response.ok) throw new Error("Failed to delete subcategory");
         alert("Subcategory deleted successfully.");
-        fetchSubcategories(); // ✅ Refresh the list after deletion
+        fetchSubcategories(); // ✅ Refresh the list
     })
     .catch(error => {
         console.error("Error deleting subcategory:", error);
@@ -1040,21 +1139,22 @@ function deleteSubcategory(subcategoryId) {
     });
 }
 
+
+// ✅ Activate/Deactivate subcategory
 function toggleSubcategoryStatus(subcategoryId, currentStatus, button) {
     const newStatus = currentStatus === "ACTIVE" ? "deactivate" : "activate";
-    
+
     fetch(`http://localhost:8081/api/subcategories/${subcategoryId}/${newStatus}`, {
         method: "PUT",
+        headers: { "Authorization": `Bearer ${getToken()}` }
     })
     .then(response => {
-        if (!response.ok) {
-            throw new Error(`Failed to ${newStatus} subcategory`);
-        }
-        return response.text(); // ✅ Handle empty response issue
+        if (!response.ok) throw new Error(`Failed to ${newStatus} subcategory`);
+        return response.text();
     })
     .then(() => {
         alert(`Subcategory ${newStatus}d successfully.`);
-        fetchSubcategories(); // ✅ Refresh the list
+        fetchSubcategories(); // ✅ Refresh list
     })
     .catch(error => {
         console.error(`Error while trying to ${newStatus} subcategory:`, error);
@@ -1062,16 +1162,7 @@ function toggleSubcategoryStatus(subcategoryId, currentStatus, button) {
     });
 }
 
-// ✅ Helper function to update button UI dynamically
-function updateSubcategoryButtonUI(button, newStatus) {
-    button.textContent = newStatus === 'ACTIVE' ? "Deactivate" : "Activate";
-    button.classList.toggle("btn-danger", newStatus === 'ACTIVE');
-    button.classList.toggle("btn-success", newStatus === 'INACTIVE');
-}
-
-
-
-// Add subcategory
+// ✅ Add new subcategory (Requires Admin)
 function addSubcategory() {
     const subcategoryName = document.getElementById("subcategoryName").value.trim();
     const categoryId = document.getElementById("categorySelect").value;
@@ -1083,19 +1174,22 @@ function addSubcategory() {
 
     fetch("http://localhost:8081/api/subcategories", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`
+        },
         body: JSON.stringify({ name: subcategoryName, category: { categoryId: categoryId }, status: "ACTIVE" })
     })
-        .then(response => response.json())
-        .then(() => {
-            alert("Subcategory added successfully!");
-            fetchSubcategories();
-            document.getElementById("subcategoryForm").style.display = "none";
-        })
-        .catch(error => console.error("Error adding subcategory:", error));
+    .then(response => response.json())
+    .then(() => {
+        alert("Subcategory added successfully!");
+        fetchSubcategories();
+        document.getElementById("subcategoryForm").style.display = "none";
+    })
+    .catch(error => console.error("Error adding subcategory:", error));
 }
 
-// Open edit modal
+// ✅ Open edit subcategory modal
 function openEditSubcategory(subcategoryId, subcategoryName, categoryId) {
     document.getElementById("editSubcategoryId").value = subcategoryId;
     document.getElementById("editSubcategoryName").value = subcategoryName;
@@ -1105,7 +1199,7 @@ function openEditSubcategory(subcategoryId, subcategoryName, categoryId) {
     editModal.show();
 }
 
-// Update subcategory
+// ✅ Update subcategory (Requires Admin)
 function updateSubcategory() {
     const subcategoryId = document.getElementById("editSubcategoryId").value;
     const subcategoryName = document.getElementById("editSubcategoryName").value.trim();
@@ -1118,18 +1212,19 @@ function updateSubcategory() {
 
     fetch(`http://localhost:8081/api/subcategories/${subcategoryId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`
+        },
         body: JSON.stringify({ name: subcategoryName, category: { categoryId: categoryId } })
     })
-        .then(() => {
-            alert("Subcategory updated successfully!");
-            fetchSubcategories();
-            document.querySelector("#editSubcategoryModal .btn-close").click();
-        })
-        .catch(error => console.error("Error updating subcategory:", error));
+    .then(() => {
+        alert("Subcategory updated successfully!");
+        fetchSubcategories();
+        document.querySelector("#editSubcategoryModal .btn-close").click();
+    })
+    .catch(error => console.error("Error updating subcategory:", error));
 }
-
-
 function toggleForm(formId) {
     let form = document.getElementById(formId);
     form.style.display = form.style.display === "none" ? "block" : "none";
@@ -1206,211 +1301,130 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    function fetchPlans() {
-    fetch("http://localhost:8081/api/plans")
-        .then(response => response.json())
-        .then(plans => {
-            const activePlansBody = document.getElementById("activePlansBody");
-            const deactivePlansBody = document.getElementById("deactivePlansBody");
+// ✅ Fetch all plans
+function fetchPlans() {
+    fetch("http://localhost:8081/api/plans", {
+        headers: {
+            "Authorization": `Bearer ${getToken()}` // ✅ Secure API calls
+        }
+    })
+    .then(response => response.json())
+    .then(plans => {
+        const activePlansBody = document.getElementById("activePlansBody");
+        const deactivePlansBody = document.getElementById("deactivePlansBody");
 
-            // ✅ Clear existing data before populating
-            activePlansBody.innerHTML = "";
-            deactivePlansBody.innerHTML = "";
+        // ✅ Clear existing data before populating
+        activePlansBody.innerHTML = "";
+        deactivePlansBody.innerHTML = "";
 
-            plans.forEach(plan => {
-                const row = `
-                    <tr>
-                        <td>${plan.planId}</td>
-                        <td>${plan.subcategory?.category?.name || "N/A"}</td>
-                        <td>${plan.subcategory?.name || "N/A"}</td>
-                        <td>${plan.planName}</td>
-                        <td>₹${plan.price}</td>
-                        <td>${plan.duration} Days</td>
-                        <td>${plan.data}</td>
-                        <td>${plan.calls}</td>
-                        <td>${plan.sms}</td>
-                        <td>${plan.ottPlatforms && plan.ottPlatforms.length > 0 
-                              ? plan.ottPlatforms.map(ott => ott.ottName).join(", ") 
-                              : "None"}</td>
-                        <td>${plan.benefits || "None"}</td>
+        plans.forEach(plan => {
+            const row = `
+                <tr>
+                    <td>${plan.planId}</td>
+                    <td>${plan.subcategory?.category?.name || "N/A"}</td>
+                    <td>${plan.subcategory?.name || "N/A"}</td>
+                    <td>${plan.planName}</td>
+                    <td>₹${plan.price}</td>
+                    <td>${plan.duration} Days</td>
+                    <td>${plan.data}</td>
+                    <td>${plan.calls}</td>
+                    <td>${plan.sms}</td>
+                    <td>${plan.ottPlatforms && plan.ottPlatforms.length > 0 
+                          ? plan.ottPlatforms.map(ott => ott.ottName).join(", ") 
+                          : "None"}</td>
+                    <td>${plan.benefits || "None"}</td>
+                    <td>
+                        <div style="width: 30px; height: 30px; background-color: ${plan.badgeColor || '#ffffff'}; border: 1px solid #ccc; border-radius: 5px;"></div>
+                    </td>
+                    <td>${plan.offer || "None"}</td>
+                    <td>
+                        <button class="btn ${plan.planStatus === 'ACTIVE' ? 'btn-danger' : 'btn-success'} btn-sm"
+                            onclick="togglePlanStatus('${plan.planId}', '${plan.planStatus}')">
+                            ${plan.planStatus === 'ACTIVE' ? "Deactivate" : "Activate"}
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editPlan('${plan.planId}')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deletePlan('${plan.planId}')">Delete</button>
+                    </td>
+                </tr>
+            `;
 
-                        <!-- ✅ Display Color Box Instead of Hex Code -->
-                        <td>
-                            <div style="width: 30px; height: 30px; background-color: ${plan.badgeColor || '#ffffff'}; border: 1px solid #ccc; border-radius: 5px;"></div>
-                        </td>
-
-                        <td>${plan.offer || "None"}</td>
-
-                        <!-- ✅ Status Column with Toggle Button -->
-                        <td>
-                            <button class="btn ${plan.planStatus === 'ACTIVE' ? 'btn-danger' : 'btn-success'} btn-sm"
-                                onclick="togglePlanStatus('${plan.planId}', '${plan.planStatus}')">
-                                ${plan.planStatus === 'ACTIVE' ? "Deactivate" : "Activate"}
-                            </button>
-                        </td>
-
-                        <!-- ✅ Action Buttons: Edit & Delete -->
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="editPlan('${plan.planId}')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deletePlan('${plan.planId}')">Delete</button>
-                        </td>
-                    </tr>
-                `;
-
-                if (plan.planStatus === "ACTIVE") {
-                    activePlansBody.innerHTML += row;
-                } else {
-                    deactivePlansBody.innerHTML += row;
-                }
-            });
-        })
-        .catch(error => console.error("Error fetching plans:", error));
+            if (plan.planStatus === "ACTIVE") {
+                activePlansBody.innerHTML += row;
+            } else {
+                deactivePlansBody.innerHTML += row;
+            }
+        });
+    })
+    .catch(error => console.error("Error fetching plans:", error));
 }
-
-
-// ✅ Function to Add a New Plan
+// ✅ Add a new plan
 function addPlan() {
     const selectedOTTs = Array.from(document.getElementById("ottDetails").selectedOptions)
-        .map(option => ({ ottId: option.value })); // ✅ Correct key: ottId
+        .map(option => ({
+            ottId: option.value,
+            ottName: option.textContent // ✅ Include OTT name
+        }));
 
     const newPlan = {
-        planName: document.getElementById("planTitle").value,
+        planName: document.getElementById("planTitle").value.trim(),
         price: parseFloat(document.getElementById("planPrice").value),
-        duration: document.getElementById("planDuration").value,
-        data: document.getElementById("planData").value,
-        calls: document.getElementById("planCalls").value,
-        sms: parseInt(document.getElementById("planSMS").value),
-        benefits: document.getElementById("planBenefits").value,
-        offer: document.getElementById("planOffer").value,
-        badgeColor: document.getElementById("planBadgeColor").value,
+        duration: document.getElementById("planDuration").value.trim(),
+        data: document.getElementById("planData").value.trim(),
+        calls: document.getElementById("planCalls").value.trim(),
+        sms: parseInt(document.getElementById("planSMS").value) || 0,
+        benefits: document.getElementById("planBenefits").value.trim(),
+        offer: document.getElementById("planOffer").value.trim(),
+        badgeColor: document.getElementById("planBadgeColor").value.trim(),
         planStatus: "ACTIVE",
-        subcategory: { subcategoryId: document.getElementById("planSubcategory").value }, // ✅ Corrected key
-        ottPlatforms: selectedOTTs // ✅ Include selected OTTs
+        subcategory: { subcategoryId: document.getElementById("planSubcategory").value },
+        ottPlatforms: selectedOTTs.length > 0 ? selectedOTTs : [] // ✅ Ensure array is sent
     };
 
     fetch("http://localhost:8081/api/plans", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`
+        },
         body: JSON.stringify(newPlan)
-    })
-    .then(response => response.json())
-    .then(() => {
-        alert("Plan added successfully!");
-        fetchPlans();
-    })
-    .catch(error => console.error("Error adding plan:", error));
-}
-
-
-function editPlan(planId) {
-    fetch(`http://localhost:8081/api/plans/${planId}`)
-        .then(response => response.json())
-        .then(plan => {
-            document.getElementById("editPlanId").value = plan.planId;
-            document.getElementById("editPlanTitle").value = plan.planName;
-            document.getElementById("editPlanPrice").value = plan.price;
-            document.getElementById("editPlanDuration").value = plan.duration;
-            document.getElementById("editPlanData").value = plan.data;
-            document.getElementById("editPlanCalls").value = plan.calls;
-            document.getElementById("editPlanSMS").value = plan.sms;
-            document.getElementById("editPlanBenefits").value = plan.benefits;
-            document.getElementById("editPlanOffer").value = plan.offer;
-            
-            // ✅ Pre-fill color picker
-            document.getElementById("editPlanBadgeColor").value = plan.badgeColor;
-            document.getElementById("editPlanBadgeColorPicker").value = plan.badgeColor;
-
-            // ✅ Fetch Categories and Pre-select in Edit Dropdown
-            if (plan.subcategory && plan.subcategory.category) {
-                fetchCategories(plan.subcategory.category.categoryId, true);
-                
-                // ✅ Fetch Subcategories after a short delay to allow population
-                setTimeout(() => {
-                    document.getElementById("editPlanSubcategory").value = plan.subcategory.subcategoryId;
-                }, 300);
-            }
-
-            // ✅ Fetch and Populate OTT Benefits
-            let ottDropdown = document.getElementById("editOttDetails");
-            fetch("http://localhost:8081/api/ott")
-                .then(response => response.json())
-                .then(ottList => {
-                    ottDropdown.innerHTML = "";
-
-                    ottList.forEach(ott => {
-                        let option = document.createElement("option");
-                        option.value = ott.ottId;
-                        option.textContent = ott.ottName || "Unnamed OTT";
-                        ottDropdown.appendChild(option);
-                    });
-
-                    // ✅ Pre-select existing OTT platforms
-                    Array.from(ottDropdown.options).forEach(option => {
-                        option.selected = plan.ottPlatforms.some(ott => ott.ottId === option.value);
-                    });
-
-                    // ✅ Show the modal after everything is populated
-                    new bootstrap.Modal(document.getElementById("editPlanModal")).show();
-                })
-                .catch(error => console.error("Error fetching OTT benefits:", error));
-        })
-        .catch(error => console.error("Error fetching plan details:", error));
-}
-
-
-function savePlanEdit() {
-    const planId = document.getElementById("editPlanId").value;
-    const selectedOTTs = Array.from(document.getElementById("editOttDetails").selectedOptions)
-        .map(option => ({ ottId: option.value })); // ✅ Correct key: ottId
-
-    const updatedPlan = {
-        planName: document.getElementById("editPlanTitle").value,
-        price: parseFloat(document.getElementById("editPlanPrice").value),
-        duration: document.getElementById("editPlanDuration").value,
-        data: document.getElementById("editPlanData").value,
-        calls: document.getElementById("editPlanCalls").value,
-        sms: parseInt(document.getElementById("editPlanSMS").value),
-        benefits: document.getElementById("editPlanBenefits").value,
-        offer: document.getElementById("editPlanOffer").value,
-        badgeColor: document.getElementById("editPlanBadgeColor").value,
-        subcategory: { subcategoryId: document.getElementById("editPlanSubcategory").value }, // ✅ Corrected key
-        ottPlatforms: selectedOTTs // ✅ Include selected OTTs
-    };
-
-    fetch(`http://localhost:8081/api/plans/${planId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedPlan)
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error("Failed to update the plan");
+            return response.text().then(text => { throw new Error(text || "Failed to add plan"); });
         }
         return response.json();
     })
     .then(() => {
-        alert("Plan updated successfully!");
-        fetchPlans(); // ✅ Refresh plan list after update
+        alert("Plan added successfully!");
+        fetchPlans(); // ✅ Refresh plan list after adding
 
-        // ✅ Close the modal programmatically
-        const editPlanModal = bootstrap.Modal.getInstance(document.getElementById("editPlanModal"));
-        if (editPlanModal) {
-            editPlanModal.hide();
-        }
+        // ✅ Clear the form after adding
+        document.getElementById("addPlanForm").reset();
+
+   
     })
-    .catch(error => console.error("Error updating plan:", error));
+    .catch(error => {
+        console.error("Error adding plan:", error);
+        alert("Failed to add plan. Check console for details.");
+    });
 }
+
 
 // ✅ Delete a plan
 function deletePlan(planId) {
     if (confirm("Are you sure you want to delete this plan? This action cannot be undone.")) {
         fetch(`http://localhost:8081/api/plans/${planId}`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${getToken()}`
+            }
         })
         .then(response => {
             if (response.ok) {
                 alert("Plan deleted successfully.");
-                fetchPlans(); // Refresh the plan list
+                fetchPlans();
             } else {
                 alert("Failed to delete the plan.");
             }
@@ -1419,30 +1433,268 @@ function deletePlan(planId) {
     }
 }
 
+// ✅ Toggle Plan Status (Activate/Deactivate)
 function togglePlanStatus(planId, currentStatus) {
     const action = currentStatus === "ACTIVE" ? "deactivate" : "activate";
 
     fetch(`http://localhost:8081/api/plans/${planId}/${action}`, {
         method: "PUT",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`
         }
     })
     .then(response => {
         if (!response.ok) {
             return response.text().then(text => { throw new Error(text || "Unknown error"); });
         }
-        return response.text(); // ✅ Handle empty response
+        return response.text();
     })
     .then(() => {
         alert(`Plan ${action}d successfully.`);
-        fetchPlans(); // ✅ Refresh the plan list
+        fetchPlans();
     })
     .catch(error => {
         console.error(`Error while trying to ${action} the plan:`, error);
         alert("Failed to update plan status. Check console for details.");
     });
 }
+function editPlan(planId) {
+    document.getElementById("editPlanId").value = planId; // Set planId in the modal
+
+    // ✅ Open the modal
+    let editPlanModal = new bootstrap.Modal(document.getElementById("editPlanModal"));
+    editPlanModal.show();
+}
+function editPlan(planId) {
+    fetch(`http://localhost:8081/api/plans/${planId}`, {
+        headers: {
+            "Authorization": `Bearer ${getToken()}` // ✅ Include JWT token
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to fetch plan details");
+        }
+        return response.json();
+    })
+    .then(plan => {
+        // ✅ Fill in the edit form with existing plan data
+        document.getElementById("editPlanId").value = plan.planId;
+        document.getElementById("editPlanTitle").value = plan.planName;
+        document.getElementById("editPlanPrice").value = plan.price;
+        document.getElementById("editPlanDuration").value = plan.duration;
+        document.getElementById("editPlanData").value = plan.data;
+        document.getElementById("editPlanCalls").value = plan.calls;
+        document.getElementById("editPlanSMS").value = plan.sms;
+        document.getElementById("editPlanBenefits").value = plan.benefits || "";
+        document.getElementById("editPlanOffer").value = plan.offer || "";
+        
+        // ✅ Pre-fill color picker
+        document.getElementById("editPlanBadgeColor").value = plan.badgeColor || "#ffffff";
+        document.getElementById("editPlanBadgeColorPicker").value = plan.badgeColor || "#ffffff";
+
+        // ✅ Select the correct subcategory
+        if (plan.subcategory) {
+            document.getElementById("editPlanSubcategory").value = plan.subcategory.subcategoryId;
+        }
+
+        // ✅ Fetch and populate OTT benefits
+        fetch("http://localhost:8081/api/ott", {
+            headers: { "Authorization": `Bearer ${getToken()}` }
+        })
+        .then(response => response.json())
+        .then(ottList => {
+            let ottDropdown = document.getElementById("editOttDetails");
+            ottDropdown.innerHTML = ""; // ✅ Clear previous options
+
+            ottList.forEach(ott => {
+                let option = document.createElement("option");
+                option.value = ott.ottId;
+                option.textContent = ott.ottName || "Unnamed OTT";
+                ottDropdown.appendChild(option);
+            });
+
+            // ✅ Pre-select existing OTT platforms
+            Array.from(ottDropdown.options).forEach(option => {
+                option.selected = plan.ottPlatforms.some(ott => ott.ottId === option.value);
+            });
+
+            // ✅ Show the edit modal AFTER data is fully loaded
+            new bootstrap.Modal(document.getElementById("editPlanModal")).show();
+        })
+        .catch(error => console.error("Error fetching OTT benefits:", error));
+    })
+    .catch(error => console.error("Error fetching plan details:", error));
+}
+function savePlanEdit() {
+    const planId = document.getElementById("editPlanId").value;
+    
+    // ✅ Collect selected OTT IDs correctly
+    const selectedOTTs = Array.from(document.getElementById("editOttDetails").selectedOptions)
+        .map(option => ({ ottId: option.value }));  // ✅ Ensure proper many-to-many format
+
+    const updatedPlan = {
+        planName: document.getElementById("editPlanTitle").value.trim(),
+        price: parseFloat(document.getElementById("editPlanPrice").value),
+        duration: document.getElementById("editPlanDuration").value.trim(),
+        data: document.getElementById("editPlanData").value.trim(),
+        calls: document.getElementById("editPlanCalls").value.trim(),
+        sms: parseInt(document.getElementById("editPlanSMS").value) || 0,
+        benefits: document.getElementById("editPlanBenefits").value.trim(),
+        offer: document.getElementById("editPlanOffer").value.trim(),
+        badgeColor: document.getElementById("editPlanBadgeColor").value.trim(),
+        subcategory: { subcategoryId: document.getElementById("editPlanSubcategory").value },
+        ottPlatforms: selectedOTTs.length > 0 ? selectedOTTs : [] // ✅ Ensure OTT is always sent
+    };
+
+    fetch(`http://localhost:8081/api/plans/${planId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}` // ✅ Include JWT token
+        },
+        body: JSON.stringify(updatedPlan)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => { throw new Error(text || "Failed to update the plan"); });
+        }
+        return response.json();
+    })
+    .then(() => {
+        alert("Plan updated successfully!");
+        fetchPlans(); // ✅ Refresh plan list after update
+
+        // ✅ Close modal after update
+        const editPlanModal = bootstrap.Modal.getInstance(document.getElementById("editPlanModal"));
+        if (editPlanModal) {
+            editPlanModal.hide();
+        }
+    })
+    .catch(error => {
+        console.error("Error updating plan:", error);
+        alert("Failed to update plan. Check console for details.");
+    });
+}
+
+const API_URL = "http://localhost:8081/api/ott";
+
+
+// ✅ Fetch & Display OTT Platforms
+function fetchOtts() {
+    fetch(API_URL, {
+        headers: { "Authorization": `Bearer ${getToken()}` }
+    })
+    .then(response => response.json())
+    .then(otts => {
+        const ottTableBody = document.getElementById("ottTableBody");
+        ottTableBody.innerHTML = ""; // Clear previous entries
+
+        otts.forEach(ott => {
+            let row = `
+                <tr>
+                    <td>${ott.ottId}</td>
+                    <td>${ott.ottName}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editOtt('${ott.ottId}', '${ott.ottName}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteOtt('${ott.ottId}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+            ottTableBody.innerHTML += row;
+        });
+    })
+    .catch(error => console.error("Error fetching OTTs:", error));
+}
+// ✅ Add OTT
+function addOtt() {
+    const ottName = document.getElementById("ottName").value.trim();
+    if (!ottName) return alert("Please enter an OTT name.");
+
+    fetch(API_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`
+        },
+        body: JSON.stringify({ ottName })
+    })
+    .then(response => response.json())
+    .then(() => {
+        alert("OTT added successfully!");
+        fetchOtts();
+        document.getElementById("ottName").value = "";
+
+        // ✅ Fix modal issue: Hide and Dispose properly
+        const addOttModalEl = document.getElementById("addOttModal");
+        const addOttModal = bootstrap.Modal.getInstance(addOttModalEl);
+        if (addOttModal) {
+            addOttModal.hide();
+            addOttModal.dispose(); // ✅ Properly remove modal instance to avoid overlay issues
+        }
+    })
+    .catch(error => console.error("Error adding OTT:", error));
+}
+
+// ✅ Open Edit Modal
+function editOtt(ottId, ottName) {
+    document.getElementById("editOttId").value = ottId;
+    document.getElementById("editOttName").value = ottName;
+    new bootstrap.Modal(document.getElementById("editOttModal")).show();
+}
+
+// ✅ Save Edited OTT
+function saveOttEdit() {
+    const ottId = document.getElementById("editOttId").value;
+    const ottName = document.getElementById("editOttName").value.trim();
+
+    fetch(`${API_URL}/${ottId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`
+        },
+        body: JSON.stringify({ ottName })
+    })
+    .then(response => response.json())
+    .then(() => {
+        alert("OTT updated successfully!");
+        fetchOtts();
+
+        // ✅ Properly close the modal
+        const editOttModal = bootstrap.Modal.getInstance(document.getElementById("editOttModal"));
+        if (editOttModal) editOttModal.hide();
+    })
+    .catch(error => console.error("Error updating OTT:", error));
+}
+
+// ✅ Delete OTT
+function deleteOtt(ottId) {
+    if (!confirm("Are you sure you want to delete this OTT?")) return;
+
+    fetch(`${API_URL}/${ottId}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${getToken()}` }
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("OTT deleted successfully.");
+            fetchOtts();
+        } else {
+            alert("Failed to delete OTT.");
+        }
+    })
+    .catch(error => console.error("Error deleting OTT:", error));
+}
+
+// Load OTTs when page loads
+fetchOtts();
+
 
     </script>
 

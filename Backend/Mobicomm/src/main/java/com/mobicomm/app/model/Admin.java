@@ -1,10 +1,12 @@
 package com.mobicomm.app.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "admin")  // ✅ Make sure the table name is correct
+@Table(name = "admin")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -12,12 +14,18 @@ import lombok.*;
 public class Admin {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // ✅ Auto-increment with primary key
-    private Long id;
-
-    @Column(unique = true, nullable = false)
+    @Column(name="admin_id")
+    private String adminId;
+    
+    @Column(name="admin_name", nullable = false)
+    private String name;
+    
+    @Column(name="admin_email", unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name="admin_password", nullable = false)
     private String password;
+    
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses;
 }

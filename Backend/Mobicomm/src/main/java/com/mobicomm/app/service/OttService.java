@@ -15,17 +15,25 @@ public class OttService {
     @Autowired
     private OttRepository ottRepository;
 
-    // ✅ Generate next OTT ID in format "ott_1", "ott_2", "ott_3"
-    private String generateOttId() {
-        Optional<Ott> lastOtt = ottRepository.findTopByOrderByOttIdDesc(); // ✅ Use Optional
+    public String generateOttId() {
+        // Fetch the latest OTT entry in descending order
+        Ott latestOtt = ottRepository.findTopByOrderByOttIdDesc();
 
-        if (lastOtt.isPresent()) {
-            String lastId = lastOtt.get().getOttId(); // e.g., "ott_10"
-            int lastNumber = Integer.parseInt(lastId.replace("ott_", "")); // Extract numeric part
-            return "ott_" + (lastNumber + 1); // ✅ Generate new ID
-        } else {
-            return "ott_1"; // ✅ First record
+        // Default to 1 if no OTT exists
+        int nextId = 1;
+        if (latestOtt != null) {
+            String latestOttId = latestOtt.getOttId(); // Expected format: MCO-XXXX
+            String numberPart = latestOttId.substring(4); // Extract numeric part
+
+            try {
+                nextId = Integer.parseInt(numberPart) + 1; // Increment number part
+            } catch (NumberFormatException e) {
+                nextId = 1;
+            }
         }
+
+        // Generate the new OTT ID
+        return String.format("MCO-%04d", nextId);
     }
 
 

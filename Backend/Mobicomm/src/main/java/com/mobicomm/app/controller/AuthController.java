@@ -10,6 +10,10 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@CrossOrigin(origins = "http://127.0.0.1:5503")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -18,7 +22,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private AdminService adminService; // ✅ Injected AdminService
+    private AdminService adminService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -26,20 +30,44 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Admin admin) {
         try {
-            // ✅ Authenticate using Spring Security
+            // ✅ Authenticate User
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(admin.getEmail(), admin.getPassword())
             );
 
-            // ✅ Generate JWT Token
-            String token = jwtUtil.generateToken(admin.getEmail());
+            // ✅ Generate Tokens
+            String accessToken = jwtUtil.generateAccessToken(admin.getEmail());
+            String refreshToken = jwtUtil.generateRefreshToken(admin.getEmail());
 
-            // ✅ Return JWT Token in JSON format
-            return ResponseEntity.ok("{ \"token\": \"" + token + "\" }");
+            // ✅ Return Both Tokens
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("accessToken", accessToken);
+            tokens.put("refreshToken", refreshToken);
+
+            return ResponseEntity.ok(tokens);
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Admin not found");
         }
+    }
+
+    // ✅ Refresh Token Endpoint
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+
+        if (refreshToken == null || !jwtUtil.validateToken(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
+
+        String email = jwtUtil.extractEmail(refreshToken);
+        String newAccessToken = jwtUtil.generateAccessToken(email);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", newAccessToken);
+        tokens.put("refreshToken", refreshToken); // Reuse the same refresh token
+
+        return ResponseEntity.ok(tokens);
     }
 }
