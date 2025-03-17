@@ -46,6 +46,13 @@ public class CategoryService {
         // Generate the new Category ID
         return String.format("MCC-%04d", nextId);
     }
+    public List<Category> getActiveCategories() {
+        return categoryRepository.findByStatus(Status.ACTIVE);
+    }
+
+    public List<Category> getInactiveCategories() {
+        return categoryRepository.findByStatus(Status.INACTIVE);
+    }
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }

@@ -1405,10 +1405,12 @@ function addPlan() {
 
    
     })
-    .catch(error => {
-        console.error("Error adding plan:", error);
-        alert("Failed to add plan. Check console for details.");
-    });
+    .catch(async error => {
+    console.error("Error adding plan:", error);
+    const errorMessage = await error.message;
+    alert(`Failed to add plan: ${errorMessage}`);
+});
+
 }
 
 

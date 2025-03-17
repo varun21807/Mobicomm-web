@@ -1,6 +1,7 @@
 package com.mobicomm.app.security;
 
 import com.mobicomm.app.service.AdminService;
+import com.mobicomm.app.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private AdminService adminService;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
@@ -32,14 +36,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            String email = jwtUtil.extractEmail(token);
+            String identifier = jwtUtil.extractIdentifier(token);
 
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails adminDetails = adminService.loadUserByUsername(email);
-                
-                if (adminDetails != null) {
+            if (identifier != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = null;
+
+                // Determine if it's an admin (email) or user (phone number)
+                if (identifier.contains("@")) {
+                    userDetails = adminService.loadUserByUsername(identifier); // Admin login
+                } else {
+                    userDetails = userService.loadUserByPhoneNumber(identifier); // User login
+                }
+
+                if (userDetails != null) {
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(adminDetails, null, adminDetails.getAuthorities());
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);

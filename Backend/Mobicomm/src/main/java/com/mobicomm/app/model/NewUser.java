@@ -1,14 +1,12 @@
 package com.mobicomm.app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.*;
+import lombok.*;
+
 @Entity
 @Table(name = "new_users")
 @Data
@@ -33,7 +31,11 @@ public class NewUser {
     @Column(name = "request_type")
     private String requestType;
     
-   @Enumerated(EnumType.STRING)
-   @Column(name = "plan_status")
-   private NewUserStatus neUserStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private NewUserStatus neUserStatus;
+    
+    @OneToMany(mappedBy = "newUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("newUser-address")
+    private List<Address> addresses;
 }

@@ -29,8 +29,8 @@ public class Plan {
     @Column(name = "price", nullable = false)
     private Long price;
 
-    @Column(name = "duration")
-    private String duration;
+    @Column(name = "validity")
+    private int validity;
 
     @Column(name = "data")
     private String data;
@@ -66,6 +66,8 @@ public class Plan {
         inverseJoinColumns = @JoinColumn(name = "ott_id")
     )
     private Set<Ott> ottPlatforms;
+    
+  
 }
     
 

@@ -2,8 +2,10 @@ package com.mobicomm.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
+@EnableJpaRepositories(basePackages = "com.mobicomm.app.repository")
 public class MobicommApplication {
 
 	public static void main(String[] args) {

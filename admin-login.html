@@ -110,8 +110,7 @@
         </form>
     </div>
     <script>
-  
-      document.getElementById("loginForm").addEventListener("submit", async function(event) {
+  document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault(); // Prevent default form submission
 
     // Get input values
@@ -124,13 +123,13 @@
     }
 
     try {
-        // ✅ Send login request to the backend
+        // ✅ Send login request to the backend with 'identifier' instead of 'email'
         const response = await fetch("http://localhost:8081/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ identifier: email, password }) // Changed 'email' to 'identifier'
         });
 
         // ✅ Handle response
@@ -150,6 +149,7 @@
         alert("Something went wrong. Please try again.");
     }
 });
+
 
         </script>
         

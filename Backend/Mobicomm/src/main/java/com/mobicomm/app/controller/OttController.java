@@ -30,21 +30,21 @@ public class OttController {
     }
 
     // ✅ Only Admins Can Add OTT Services
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping
     public Ott addOtt(@RequestBody Ott ott) {
         return ottService.addOtt(ott);
     }
 
     // ✅ Only Admins Can Update OTT Services
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public Ott updateOtt(@PathVariable String id, @RequestBody Ott updatedOtt) {
         return ottService.updateOtt(id, updatedOtt);
     }
 
     // ✅ Only Admins Can Delete OTT Services
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteOtt(@PathVariable String id) {
         ottService.deleteOtt(id);

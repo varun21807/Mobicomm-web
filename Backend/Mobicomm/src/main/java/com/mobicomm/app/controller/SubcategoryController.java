@@ -1,5 +1,6 @@
 package com.mobicomm.app.controller;
 
+import com.mobicomm.app.model.Status;
 import com.mobicomm.app.model.Subcategory;
 import com.mobicomm.app.service.SubcategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,31 +30,45 @@ public class SubcategoryController {
     }
 
     // ✅ Only Admin can modify subcategories
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping
     public Subcategory addSubcategory(@RequestBody Subcategory subcategory) {
         return subcategoryService.addSubcategory(subcategory);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public Subcategory updateSubcategory(@PathVariable String id, @RequestBody Subcategory updatedSubcategory) {
         return subcategoryService.updateSubcategory(id, updatedSubcategory);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteSubcategory(@PathVariable String id) {
         subcategoryService.deleteSubcategory(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{id}/deactivate")
     public void deactivateSubcategory(@PathVariable String id) {
         subcategoryService.deactivateSubcategory(id);
     }
+    @GetMapping("/status/{status}")
+    public List<Subcategory> getSubcategoriesByStatus(@PathVariable Status status) {
+        return subcategoryService.getSubcategoriesByStatus(status);
+    }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/category/{categoryId}")
+    public List<Subcategory> getSubcategoriesByCategory(@PathVariable String categoryId) {
+        return subcategoryService.getSubcategoriesByCategory(categoryId);
+    }
+
+    @GetMapping("/category/{categoryId}/active")
+    public List<Subcategory> getActiveSubcategoriesByCategory(@PathVariable String categoryId) {
+        return subcategoryService.getActiveSubcategoriesByCategory(categoryId);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{id}/activate")
     public void activateSubcategory(@PathVariable String id) {
         subcategoryService.activateSubcategory(id);

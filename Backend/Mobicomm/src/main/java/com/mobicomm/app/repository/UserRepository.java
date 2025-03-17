@@ -9,10 +9,12 @@ import com.mobicomm.app.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
-    Optional<User> findTopByOrderByUserIdDesc();
+    User findTopByOrderByUserIdDesc();
     Optional<User> findByUserEmail(String userEmail);
-    Optional<User> findByPhoneNumber(Long phoneNumber);
+   
     Optional<User> findByUserName(String userName);
+    Optional<User> findByPhoneNumber(String phoneNumber);
+
 
 }
 

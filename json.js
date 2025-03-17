@@ -1,40 +1,75 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const apiUrl = "http://localhost:3000/categories";
+    const apiUrl = "http://localhost:8081/api/plans"; // ✅ Fetch directly from plans
     let planTabs = document.getElementById("planTabs");
     let planContent = document.getElementById("planContent");
 
     fetch(apiUrl)
         .then(response => response.json())
-        .then(categories => {
+        .then(plans => {
+            let groupedPlans = groupPlansByCategory(plans);
             let tabLinks = '';
             let tabPanels = '';
 
-            categories.forEach((category, index) => {
+            Object.keys(groupedPlans).forEach((categoryName, index) => {
                 let tabClass = index === 0 ? "nav-link active" : "nav-link";
                 let contentClass = index === 0 ? "tab-pane fade show active" : "tab-pane fade";
-                
+
                 tabLinks += `<li class="nav-item">
-                    <a class="${tabClass}" data-bs-toggle="pill" href="#${category.id}">${category.name}</a>
+                    <a class="${tabClass}" data-bs-toggle="pill" href="#category-${index}">${categoryName}</a>
                 </li>`;
-                
-                tabPanels += `<div class="${contentClass}" id="${category.id}">
-                    <p>Loading ${category.name}...</p>
+
+                tabPanels += `<div class="${contentClass}" id="category-${index}">
+                    <p>Loading ${categoryName} plans...</p>
                 </div>`;
             });
 
             planTabs.innerHTML = tabLinks;
             planContent.innerHTML = tabPanels;
 
-            categories.forEach(category => fetchAndUpdatePlans(category));
+            Object.entries(groupedPlans).forEach(([categoryName, subcategoryMap], index) => {
+                fetchAndUpdatePlans(categoryName, subcategoryMap, `category-${index}`);
+            });
         })
-        .catch(error => console.error("Error fetching categories:", error));
+        .catch(error => console.error("Error fetching plans:", error));
 
-    function fetchAndUpdatePlans(category) {
-        let tabContent = document.getElementById(category.id);
-        let accordionHtml = `<div class="accordion" id="accordion${category.id}">`;
+    function groupPlansByCategory(plans) {
+        let categoryMap = {};
 
-        category.subcategories.forEach((subcategory, index) => {
-            accordionHtml += createAccordionItem(subcategory.name, subcategory.plans, category.id, index + 1);
+        // ✅ Filter out inactive plans
+        let activePlans = plans.filter(plan => plan.planStatus === "ACTIVE");
+
+        activePlans.forEach(plan => {
+            let categoryName = plan.subcategory.category.name;
+            let subcategoryName = plan.subcategory.name;
+
+            if (!categoryMap[categoryName]) {
+                categoryMap[categoryName] = {};
+            }
+            if (!categoryMap[categoryName][subcategoryName]) {
+                categoryMap[categoryName][subcategoryName] = [];
+            }
+
+            categoryMap[categoryName][subcategoryName].push(plan);
+        });
+
+        // ✅ Remove empty categories (if all subcategories are empty)
+        Object.keys(categoryMap).forEach(category => {
+            if (Object.keys(categoryMap[category]).length === 0) {
+                delete categoryMap[category];
+            }
+        });
+
+        return categoryMap;
+    }
+
+    function fetchAndUpdatePlans(categoryName, subcategoryMap, categoryId) {
+        let tabContent = document.getElementById(categoryId);
+        let accordionHtml = `<div class="accordion" id="accordion-${categoryId}">`;
+
+        Object.entries(subcategoryMap).forEach(([subcategoryName, plans], index) => {
+            if (plans.length > 0) {
+                accordionHtml += createAccordionItem(subcategoryName, plans, categoryId, index + 1);
+            }
         });
 
         accordionHtml += "</div>";
@@ -54,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </button>
             </p>
             <div id="collapse${categoryId}${accordionId}" class="accordion-collapse collapse ${accordionId === 1 ? 'show' : ''}"
-                aria-labelledby="heading${categoryId}${accordionId}" data-bs-parent="#accordion${categoryId}">
+                aria-labelledby="heading${categoryId}${accordionId}" data-bs-parent="#accordion-${categoryId}">
                 <div class="accordion-body">
                     <div class="row">${plansHtml}</div>
                 </div>
@@ -93,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p><i class="fas fa-database"></i> <strong>Data:</strong> ${plan.data || 'N/A'}</p>
                     <p><i class="fas fa-phone-alt"></i> <strong>Calls:</strong> ${plan.calls || 'N/A'}</p>
                     <p><i class="fas fa-envelope"></i> <strong>SMS:</strong> ${plan.sms || 'N/A'} messages</p>
-                    <p><i class="fas fa-tv"></i> <strong>OTT Subscriptions:</strong> ${plan.ott || 'None'}</p>
+                    <p><i class="fas fa-tv"></i> <strong>OTT Subscriptions:</strong> ${plan.ottPlatforms?.map(ott => ott.ottName).join(", ") || 'None'}</p>
                     <p><i class="fas fa-gift"></i> <strong>Additional Benefits:</strong> ${plan.benefits || 'N/A'}</p>
                     <p><i class="fas fa-tag"></i> <strong>Offer:</strong> ${plan.offer || 'N/A'}</p>
                     
@@ -105,6 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         </div>`;
     }
+});
 
     document.addEventListener("click", function (event) {
         if (event.target.classList.contains("show-details-btn")) {
@@ -131,4 +167,3 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
-});

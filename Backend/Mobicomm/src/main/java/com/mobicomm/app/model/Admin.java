@@ -2,6 +2,8 @@ package com.mobicomm.app.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,5 +29,6 @@ public class Admin {
     private String password;
     
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("admin-address")  
     private List<Address> addresses;
 }

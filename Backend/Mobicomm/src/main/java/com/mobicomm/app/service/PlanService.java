@@ -27,21 +27,20 @@ public class PlanService {
     
     @Autowired
     private OttRepository ottRepository;
-    
     public String generatePlanId() {
         // Fetch the latest plan entry based on descending order of ID
-        Plan latestPlan = planRepository.findTopByOrderByPlanIdDesc();
+        Optional<Plan> latestPlanOpt = planRepository.findTopByOrderByPlanIdDesc();
 
         // Default to 1 if no plans exist
         int nextId = 1;  
-        if (latestPlan != null) {
-            String latestPlanId = latestPlan.getPlanId(); // Expected format: MCP-XXXX
+        if (latestPlanOpt.isPresent()) {
+            String latestPlanId = latestPlanOpt.get().getPlanId(); // Expected format: MCP-XXXX
             String numberPart = latestPlanId.substring(4); // Extract numeric part
 
             try {
                 nextId = Integer.parseInt(numberPart) + 1; // Increment number part
             } catch (NumberFormatException e) {
-                nextId = 1;
+                nextId = 1; // Fallback if parsing fails
             }
         }
 
@@ -58,7 +57,13 @@ public class PlanService {
         return planRepository.findById(planId);
     }
 
-    
+    public List<Plan> getActivePlans() {
+        return planRepository.findByPlanStatus(Status.ACTIVE);
+    }
+
+    public List<Plan> getInactivePlans() {
+        return planRepository.findByPlanStatus(Status.INACTIVE);
+    }
     public Plan addPlan(Plan plan) {
         plan.setPlanId(generatePlanId()); // ✅ Ensure unique ID}
 
@@ -73,7 +78,7 @@ public class PlanService {
 
         existingPlan.setPlanName(updatedPlan.getPlanName());
         existingPlan.setPrice(updatedPlan.getPrice());
-        existingPlan.setDuration(updatedPlan.getDuration());
+        existingPlan.setValidity(updatedPlan.getValidity());
         existingPlan.setData(updatedPlan.getData());
         existingPlan.setCalls(updatedPlan.getCalls());
         existingPlan.setSms(updatedPlan.getSms());

@@ -1,5 +1,7 @@
 package com.mobicomm.app.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,14 +28,17 @@ public class Address {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = true)
+    @JsonBackReference("user-address") // ✅ Matches reference in User entity
     private User user;
-
+    
     @ManyToOne
     @JoinColumn(name = "new_user_id", referencedColumnName = "new_user_id", nullable = true)
+    @JsonBackReference("newUser-address")
     private NewUser newUser;
     
     @ManyToOne
     @JoinColumn(name = "admin_id", referencedColumnName = "admin_id", nullable = true)
+    @JsonBackReference("admin-address")
     private Admin admin;
     
 }

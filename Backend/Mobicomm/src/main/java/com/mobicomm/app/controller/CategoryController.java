@@ -30,30 +30,45 @@ public class CategoryController {
 
     // ✅ Only Admin can create, update, delete
     @PreAuthorize("hasRole('ADMIN')")
+ // Change this to match your token's role
     @PostMapping
     public Category addCategory(@RequestBody Category category) {
         return categoryService.addCategory(category);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+  // Change this to match your token's role
     @PutMapping("/{id}")
     public Category updateCategory(@PathVariable String id, @RequestBody Category updatedCategory) {
         return categoryService.updateCategory(id, updatedCategory);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+  // Change this to match your token's role
     @DeleteMapping("/{id}")
     public void deleteCategory(@PathVariable String id) {
         categoryService.deleteCategory(id);
     }
 
+    @GetMapping("/active")
+    public List<Category> getActiveCategories() {
+        return categoryService.getActiveCategories();
+    }
+
+    @GetMapping("/inactive")
+    public List<Category> getInactiveCategories() {
+        return categoryService.getInactiveCategories();
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
+  // Change this to match your token's role
     @PutMapping("/{id}/activate")
     public void activateCategory(@PathVariable String id) {
         categoryService.activateCategory(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+ // Change this to match your token's role
     @PutMapping("/{id}/deactivate")
     public void deactivateCategory(@PathVariable String id) {
         categoryService.deactivateCategory(id);

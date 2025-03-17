@@ -28,31 +28,40 @@ public class PlanController {
     }
 
     // ✅ Only Admins can modify plans
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping
     public Plan addPlan(@RequestBody Plan plan) {
         return planService.addPlan(plan);
     }
+    @GetMapping("/active")
+    public List<Plan> getActivePlans() {
+        return planService.getActivePlans();
+    }
+    
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/inactive")
+    public List<Plan> getInactivePlans() {
+        return planService.getInactivePlans();
+    }
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public Plan updatePlan(@PathVariable String id, @RequestBody Plan updatedPlan) {
         return planService.updatePlan(id, updatedPlan);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public void deletePlan(@PathVariable String id) {
         planService.deletePlan(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{id}/deactivate")
     public void deactivatePlan(@PathVariable String id) {
         planService.deactivatePlan(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{id}/activate")
     public void activatePlan(@PathVariable String id) {
         planService.activatePlan(id);

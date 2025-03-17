@@ -46,28 +46,273 @@
                 </div>
             </div>
         </div>
+
+  <!-- Modal Structure -->
+  <div class="modal fade" id="getplanModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content custom-modal">
+        <div class="modal-header border-0">
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="icon-container">
+            <img src="https://cdn-icons-png.flaticon.com/512/833/833313.png" alt="Recharge Icon" width="50">
+          </div>
+          <h3 class="modal-title fw-bold mt-2">Recharge</h3>
+          <p class="text-muted">Enter your Jio number</p>
+  
+          <div class="form-group mt-3">
+            <label class="form-label">Mobile number</label>
+            <input type="text" class="form-control" id="mobile-number" placeholder="Enter your number">
+          </div>
+  
+          <button class="btn continue-btn w-100 mt-4" id="payBtn">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
     </section>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch("http://localhost:3000/plans")
-                .then(response => response.json())
-                .then(data => {
-                    let planTabs = document.getElementById("planTabs");
-                    let planContent = document.getElementById("planContent");
-                    let first = true;
+    <script src="json.js"></script>
+ <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+ <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        console.log("✅ Page Loaded, Initializing Payment Setup...");
 
-                    Object.keys(data).forEach((key, index) => {
-                        let tabId = key.replace(/_/g, "");
-                        let tabClass = first ? "nav-link active" : "nav-link";
-                        planTabs.innerHTML += `<li class="nav-item"><a class="${tabClass}" data-bs-toggle="pill" href="#${tabId}">${key.replace(/_/g, " ")}</a></li>`;
-                        planContent.innerHTML += `<div class="tab-pane fade ${first ? "show active" : ""}" id="${tabId}"></div>`;
-                        first = false;
-                    });
-                })
-                .catch(error => console.error("Error fetching categories:", error));
+        try {
+            await waitForCashfreeSDK();
+            console.log("✅ Cashfree SDK Loaded Successfully");
+        } catch (error) {
+            console.error("❌ Cashfree SDK Failed to Load:", error);
+            alert("Failed to load Cashfree SDK. Check console for details.");
+            return;
+        }
+
+        setupPaymentButton();
+    });
+
+    function waitForCashfreeSDK() {
+        return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+                clearInterval(check);
+                reject(new Error("Cashfree SDK not loaded after 10 seconds"));
+            }, 10000);
+
+            const check = setInterval(() => {
+                if (window.Cashfree) {
+                    clearTimeout(timeout);
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 500);
         });
-    </script>
+    }
+
+    async function validateMobileNumberModal() {
+        let mobileInput = document.getElementById("mobile-number");
+        let errorText = document.getElementById("modal-error-text");
+        let mobileNumber = mobileInput.value.trim();
+
+        // ✅ Validate mobile number format
+        if (!/^[6-9]\d{9}$/.test(mobileNumber)) {
+            errorText.innerText = "Please enter a valid 10-digit mobile number.";
+            document.getElementById("payBtn").disabled = true;
+            return;
+        }
+
+        try {
+            console.log("🔄 Checking user for mobile number:", mobileNumber);
+            const response = await fetch(`http://localhost:8081/api/users/phone/${mobileNumber}`);
+
+            if (!response.ok) {
+                throw new Error("Mobile number not found");
+            }
+
+            const user = await response.json();
+            console.log("✅ User data fetched:", user);
+
+            // ✅ Store user details for payment processing
+            sessionStorage.setItem("mobileNumber", mobileNumber);
+            sessionStorage.setItem("userDetails", JSON.stringify(user));
+
+            errorText.innerText = "";
+            document.getElementById("payBtn").disabled = false; // Enable payment button
+
+        } catch (error) {
+            console.error("❌ Error fetching user data:", error);
+            errorText.innerText = "Mobile number not found. Please enter a valid number.";
+            document.getElementById("payBtn").disabled = true;
+        }
+    }
+
+    function setupPaymentButton() {
+        const payButton = document.getElementById("payBtn");
+
+        if (!payButton) {
+            console.error("❌ Pay Button not found on the page!");
+            alert("Payment button is missing. Cannot proceed.");
+            return;
+        }
+
+        payButton.addEventListener("click", async function () {
+            console.log("🛒 Pay Button Clicked! Initiating Payment...");
+
+            try {
+                const orderData = await createOrder();
+
+                if (!orderData || !orderData.paymentSessionId) {
+                    console.error("⚠️ Invalid Order Response:", orderData);
+                    alert("Failed to get payment session. Check console.");
+                    return;
+                }
+
+                console.log("✅ Order Created Successfully. Session ID:", orderData.paymentSessionId);
+
+                const cashfree = Cashfree({ mode: "sandbox" });
+
+                const checkoutResponse = cashfree.checkout({
+                    paymentSessionId: orderData.paymentSessionId,
+                    redirect: false
+                });
+
+                console.log("🔍 Checkout Initiated, Waiting for User Interaction...");
+
+                checkoutResponse.then((paymentResponse) => {
+                    console.log("✅ Payment Completed:", paymentResponse);
+
+                    if (paymentResponse.order && paymentResponse.order.status) {
+                        const orderStatus = paymentResponse.order.status;
+                        const paymentMethod = paymentResponse.transaction.paymentMethod;
+                        console.log("📌 Order Status from Cashfree:", orderStatus);
+                        if (orderStatus === "PAID") {
+                            handlePaymentSuccess(orderStatus, paymentMethod);
+                        } else {
+                            console.error("⚠️ Order not successful.");
+                        }
+                    } else {
+                        console.error("⚠️ Order status not found in response.");
+                    }
+                }).catch(error => {
+                    console.error("❌ Payment Modal Error:", error);
+                    alert("Payment failed. Check console for details.");
+                });
+
+            } catch (error) {
+                console.error("❌ Payment Process Failed:", error);
+                alert("Payment process failed. Check console.");
+            }
+        });
+    }
+
+    async function createOrder() {
+        console.log("🔄 Creating Order with Backend...");
+
+        const mobileNumber = sessionStorage.getItem("mobileNumber");
+        const selectedPlan = JSON.parse(sessionStorage.getItem("selectedPlan"));
+        const userDetails = JSON.parse(sessionStorage.getItem("userDetails"));
+
+        console.log("📌 mobileNumber:", mobileNumber);
+        console.log("📌 selectedPlan:", selectedPlan);
+        console.log("📌 userDetails:", userDetails);
+
+        if (!mobileNumber || !selectedPlan || !userDetails) {
+            console.error("❌ Missing order details. Cannot create order.");
+            alert("Error: Missing mobile number or plan details.");
+            return null;
+        }
+
+        const orderPayload = {
+            orderId: "order_" + Date.now(),
+            amount: selectedPlan.price,
+            currency: "INR",
+            customerPhone: mobileNumber,
+            customerDetails: {
+                userId: userDetails.userId,
+                userName: userDetails.userName,
+                userEmail: userDetails.userEmail,
+                phone: mobileNumber
+            },
+            planId: selectedPlan.planId
+        };
+
+        try {
+            const response = await fetch("http://localhost:8081/api/orders/create-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderPayload)
+            });
+
+            const data = await response.json();
+            console.log("✅ Backend Response:", data);
+
+            if (!response.ok || !data.paymentSessionId) {
+                throw new Error(`Server returned ${response.status}: ${JSON.stringify(data)}`);
+            }
+
+            sessionStorage.setItem("orderId", orderPayload.orderId);
+            return data;
+
+        } catch (error) {
+            console.error("❌ Order Creation Failed:", error);
+            throw error;
+        }
+    }
+
+    async function handlePaymentSuccess(orderStatus, paymentMethod) {
+        const mobileNumber = sessionStorage.getItem("mobileNumber");
+        const selectedPlan = JSON.parse(sessionStorage.getItem("selectedPlan"));
+        const orderId = sessionStorage.getItem("orderId");
+
+        if (!mobileNumber || !selectedPlan || !orderId) {
+            console.error("❌ Missing order details. Cannot process payment.");
+            return;
+        }
+
+        await sendPaymentWebhook(
+            orderStatus,
+            selectedPlan.planId,
+            mobileNumber,
+            selectedPlan.price,
+            paymentMethod
+        );
+    }
+
+    async function sendPaymentWebhook(orderStatus, planId, mobileNumber, price, paymentMethod) {
+        const paymentData = {
+            orderStatus: orderStatus, 
+            planId: planId,
+            customerPhone: mobileNumber,
+            orderAmount: price,
+            paymentMethod: paymentMethod
+        };
+
+        console.log("📌 Sending webhook payload to backend:", paymentData);
+        try {
+            const response = await fetch("http://localhost:8081/api/payment/webhook", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(paymentData)
+            });
+
+            const data = await response.json();
+            console.log("✅ Webhook Response:", data);
+
+            if (!response.ok) {
+                throw new Error(`Webhook Error: ${response.status}`);
+            }
+
+            alert("🎉 Payment successful! Your plan is activated.");
+            window.location.reload();
+
+        } catch (error) {
+            console.error("❌ Webhook Failed:", error);
+            alert("Error processing payment. Check console.");
+        }
+    }
+</script>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

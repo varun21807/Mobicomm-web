@@ -26,21 +26,25 @@ public class SubcategoryService {
     private PlanRepository planRepository;
 
 
-    // Method to generate Subcategory ID in the format MCS-0001
+ // Method to generate Subcategory ID in the format MCS-0001
     public String generateSubcategoryId() {
         // Fetch the latest subcategory entry in descending order
-        Subcategory latestSubcategory = subcategoryRepository.findTopByOrderBySubcategoryIdDesc();
+        Optional<Subcategory> latestSubcategoryOpt = subcategoryRepository.findTopByOrderBySubcategoryIdDesc();
 
-        // Default to 1 if no subcategories exist
+        // Default ID if no subcategories exist
         int nextId = 1;
-        if (latestSubcategory != null) {
-            String latestSubcategoryId = latestSubcategory.getSubcategoryId(); // Expected format: MCS-XXXX
-            String numberPart = latestSubcategoryId.substring(4); // Extract numeric part
 
-            try {
-                nextId = Integer.parseInt(numberPart) + 1; // Increment number part
-            } catch (NumberFormatException e) {
-                nextId = 1;
+        if (latestSubcategoryOpt.isPresent()) {
+            Subcategory latestSubcategory = latestSubcategoryOpt.get();
+            String latestSubcategoryId = latestSubcategory.getSubcategoryId(); // Expected format: MCS-XXXX
+
+            if (latestSubcategoryId != null && latestSubcategoryId.startsWith("MCS-")) {
+                String numberPart = latestSubcategoryId.substring(4); // Extract numeric part
+                try {
+                    nextId = Integer.parseInt(numberPart) + 1; // Increment number part
+                } catch (NumberFormatException e) {
+                    nextId = 1; // Reset if parsing fails
+                }
             }
         }
 
@@ -80,7 +84,19 @@ public class SubcategoryService {
             })
             .orElseThrow(() -> new RuntimeException("Subcategory not found with ID: " + subcategoryId));
     }
+   
 
+    public List<Subcategory> getSubcategoriesByStatus(Status status) {
+        return subcategoryRepository.findByStatus(status);
+    }
+
+    public List<Subcategory> getSubcategoriesByCategory(String categoryId) {
+        return subcategoryRepository.findByCategory_CategoryId(categoryId);
+    }
+
+    public List<Subcategory> getActiveSubcategoriesByCategory(String categoryId) {
+        return subcategoryRepository.findActiveSubcategoriesByCategory(categoryId);
+    }
     public void deleteSubcategory(String subcategoryId) {
         subcategoryRepository.deleteById(subcategoryId);
     }
