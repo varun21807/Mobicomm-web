@@ -116,15 +116,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         data-bs-target="#planDetails${categoryId}${accordionId}${index}" aria-expanded="false">
                         <i class="fas fa-info-circle"></i> See More
                     </button>
-                    <button class="btn buy-now-btn w-50" data-bs-toggle="modal" data-bs-target="#getplanModal"
-                        data-plan='${JSON.stringify(plan)}'>
-                        <i class="fas fa-shopping-cart"></i> Buy Now
-                    </button>
+      <button class="btn buy-now-btn w-50" 
+        onclick="openRechargeModal(this)" 
+        data-plan='${JSON.stringify(plan)}'>
+    <i class="fas fa-shopping-cart"></i> Buy Now
+</button>
+
+
                 </div>
 
                 <div class="collapse mt-3 text-start" id="planDetails${categoryId}${accordionId}${index}">
                     <hr>
-                    <p><i class="fas fa-calendar-alt"></i> <strong>Duration:</strong> ${plan.duration || 'N/A'} Days</p>
+                    <p><i class="fas fa-calendar-alt"></i> <strong>Duration:</strong> ${plan.validity || 'N/A'} Days</p>
                     <p><i class="fas fa-database"></i> <strong>Data:</strong> ${plan.data || 'N/A'}</p>
                     <p><i class="fas fa-phone-alt"></i> <strong>Calls:</strong> ${plan.calls || 'N/A'}</p>
                     <p><i class="fas fa-envelope"></i> <strong>SMS:</strong> ${plan.sms || 'N/A'} messages</p>
@@ -132,9 +135,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p><i class="fas fa-gift"></i> <strong>Additional Benefits:</strong> ${plan.benefits || 'N/A'}</p>
                     <p><i class="fas fa-tag"></i> <strong>Offer:</strong> ${plan.offer || 'N/A'}</p>
                     
-                    <button class="btn buy-now-btn w-100" data-bs-toggle="modal" data-bs-target="#getplanModal"
-                        data-plan='${JSON.stringify(plan)}'>
-                        <i class="fas fa-shopping-cart"></i> Buy Now
+   <button class="btn buy-now-btn w-100" 
+        onclick="openRechargeModal(this)" 
+        data-plan='${JSON.stringify(plan)}'>
+    <i class="fas fa-shopping-cart"></i> Buy Now
+</button>
+
+
                     </button>
                 </div>
             </div>

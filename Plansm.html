@@ -1325,7 +1325,7 @@ function fetchPlans() {
                     <td>${plan.subcategory?.name || "N/A"}</td>
                     <td>${plan.planName}</td>
                     <td>₹${plan.price}</td>
-                    <td>${plan.duration} Days</td>
+                    <td>${plan.validity} Days</td>
                     <td>${plan.data}</td>
                     <td>${plan.calls}</td>
                     <td>${plan.sms}</td>
@@ -1370,7 +1370,7 @@ function addPlan() {
     const newPlan = {
         planName: document.getElementById("planTitle").value.trim(),
         price: parseFloat(document.getElementById("planPrice").value),
-        duration: document.getElementById("planDuration").value.trim(),
+        validity: document.getElementById("planDuration").value.trim(),
         data: document.getElementById("planData").value.trim(),
         calls: document.getElementById("planCalls").value.trim(),
         sms: parseInt(document.getElementById("planSMS").value) || 0,
@@ -1539,7 +1539,7 @@ function savePlanEdit() {
     const updatedPlan = {
         planName: document.getElementById("editPlanTitle").value.trim(),
         price: parseFloat(document.getElementById("editPlanPrice").value),
-        duration: document.getElementById("editPlanDuration").value.trim(),
+        validity: document.getElementById("editPlanDuration").value.trim(),
         data: document.getElementById("editPlanData").value.trim(),
         calls: document.getElementById("editPlanCalls").value.trim(),
         sms: parseInt(document.getElementById("editPlanSMS").value) || 0,

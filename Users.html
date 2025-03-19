@@ -660,84 +660,102 @@ new Chart(subscriptionTrendsCtx, {
         maintainAspectRatio: false
     }
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const userTable = document.getElementById("userTable");
+    const historyTable = document.getElementById("historyTable");
+    const customerName = document.getElementById("customerName");
+    const customerMobile = document.getElementById("customerMobile");
 
-//json
-async function fetchCustomers() {
-    try {
-        const response = await fetch("http://localhost:3000/customers");
-        const customers = await response.json();
+    // Fetch users and populate the table
+    function fetchUsers() {
+        fetch("http://localhost:8081/api/users", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("accessToken")
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error fetching users: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(users => {
+            userTable.innerHTML = ""; // Clear existing data
 
-        const tableBody = document.getElementById("userTable");
-        tableBody.innerHTML = ""; // Clear existing rows
-
-        customers.forEach(customer => {
-            const row = document.createElement("tr");
-
-            // Store customer details in data attributes
-            row.dataset.customerId = customer.customerId;
-            row.dataset.customerName = customer.name;
-            row.dataset.customerMobile = customer.mobile;
-
-            row.innerHTML = `
-                <td>${customer.customerId}</td>
-                <td>${customer.name}</td>
-                <td>${customer.email}</td>
-                <td>${customer.mobile}</td>
-                <td><span class="badge ${customer.accountStatus === 'Active' ? 'badge-active' : 'badge-inactive'}">${customer.accountStatus}</span></td>
-            `;
-
-            // Attach event listener for row click
-            row.addEventListener("click", function () {
-                showHistory(this.dataset.customerId, this.dataset.customerName, this.dataset.customerMobile);
-            });
-
-            tableBody.appendChild(row);
-        });
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
-}
-
-// Fetch data when page loads
-window.onload = fetchCustomers;
-function showHistory(customerId) {
-    fetch("http://localhost:3000/customers")
-        .then(response => response.json())
-        .then(customers => {
-            const customer = customers.find(c => c.customerId === customerId);
-            if (!customer) {
-                console.error("Customer not found.");
+            if (users.length === 0) {
+                userTable.innerHTML = "<tr><td colspan='5' class='text-center'>No Users Found</td></tr>";
                 return;
             }
 
-            // Update modal title and customer details
-            document.getElementById("customerName").textContent = customer.name;
-            document.getElementById("customerMobile").textContent = customer.mobile;
-
-            // Get history table body
-            const historyTable = document.getElementById("historyTable");
-            historyTable.innerHTML = ""; // Clear previous data
-
-            // Populate table with recharge history
-            customer.rechargeHistory.forEach(history => {
+            users.forEach(user => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${history.rechargeDate}</td>
-                    <td>${history.title}</td>
-                    <td>₹${history.price}</td>
-                    <td>${new Date(history.expiryDate) > new Date() ? "Active" : "Expired"}</td>
+                    <td>${user.userId}</td>  
+                    <td>${user.userName}</td>  
+                    <td>${user.userEmail}</td>  
+                    <td>${user.phoneNumber}</td>  
+                    <td>${user.status}</td> 
                 `;
-                historyTable.appendChild(row);
-            });
 
-            // Show the modal
-            const modal = new bootstrap.Modal(document.getElementById("historyModal"));
-            modal.show();
+                // On clicking a row, open recharge history modal
+                row.addEventListener("click", function () {
+                    showRechargeHistory(user.phoneNumber, user.userName);
+                });
+
+                userTable.appendChild(row);
+            });
         })
-        .catch(error => console.error("Error fetching recharge history:", error));
+        .catch(error => {
+            console.error("Error fetching users:", error);
+            userTable.innerHTML = "<tr><td colspan='5' class='text-center text-danger'>Failed to load users</td></tr>";
+        });
+    }
+
+    function showRechargeHistory(phoneNumber, name) {
+    customerName.textContent = name;
+    customerMobile.textContent = phoneNumber;
+    historyTable.innerHTML = "<tr><td colspan='4' class='text-center'>Loading...</td></tr>";
+
+    fetch(`http://localhost:8081/api/recharge-history/${phoneNumber}`, {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken")
+        }
+    })
+    .then(response => response.json())
+    .then(history => {
+        historyTable.innerHTML = ""; // Clear loading text
+
+        if (!history || history.length === 0) {
+            historyTable.innerHTML = "<tr><td colspan='4' class='text-center'>No Recharge History</td></tr>";
+            return;
+        }
+
+        history.forEach(entry => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${entry.rechargeDate ? new Date(entry.rechargeDate).toLocaleDateString() : "N/A"}</td>
+                <td>${entry.plan && entry.plan.planName ? entry.plan.planName : "Unknown Plan"}</td>
+                <td>₹${entry.amount ?? "0"}</td>
+                <td>Success</td>
+            `;
+            historyTable.appendChild(row);
+        });
+
+        new bootstrap.Modal(document.getElementById("historyModal")).show();
+    })
+    .catch(error => {
+        console.error("Error fetching recharge history:", error);
+        historyTable.innerHTML = "<tr><td colspan='4' class='text-center text-danger'>Failed to load recharge history</td></tr>";
+    });
 }
 
-// Example usage: Call showHistory("CUST1001") when needed
+    // Initial fetch
+    fetchUsers();
+});
+
+
 
 
 

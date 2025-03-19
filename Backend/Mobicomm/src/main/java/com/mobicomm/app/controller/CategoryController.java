@@ -1,13 +1,14 @@
 package com.mobicomm.app.controller;
 
+import com.mobicomm.app.exception.CategoryNotFoundException;
 import com.mobicomm.app.model.Category;
 import com.mobicomm.app.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "http://127.0.0.1:5503")
 @RestController
@@ -17,60 +18,57 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    // ✅ Anyone (admin & user) can see categories
     @GetMapping
-    public List<Category> getAllCategories() {
-        return categoryService.getAllCategories();
+    public ResponseEntity<List<Category>> getAllCategories() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
-
     @GetMapping("/{id}")
-    public Optional<Category> getCategoryById(@PathVariable String id) {
-        return categoryService.getCategoryById(id);
+    public ResponseEntity<Category> getCategoryById(@PathVariable String id) {
+        Category category = categoryService.getCategoryById(id); 
+        return ResponseEntity.ok(category);
     }
 
-    // ✅ Only Admin can create, update, delete
+
     @PreAuthorize("hasRole('ADMIN')")
- // Change this to match your token's role
     @PostMapping
-    public Category addCategory(@RequestBody Category category) {
-        return categoryService.addCategory(category);
+    public ResponseEntity<Category> addCategory(@RequestBody Category category) {
+        return ResponseEntity.status(201).body(categoryService.addCategory(category));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-  // Change this to match your token's role
     @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable String id, @RequestBody Category updatedCategory) {
-        return categoryService.updateCategory(id, updatedCategory);
+    public ResponseEntity<Category> updateCategory(@PathVariable String id, @RequestBody Category updatedCategory) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, updatedCategory));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-  // Change this to match your token's role
     @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable String id) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable String id) {
         categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/active")
-    public List<Category> getActiveCategories() {
-        return categoryService.getActiveCategories();
+    public ResponseEntity<List<Category>> getActiveCategories() {
+        return ResponseEntity.ok(categoryService.getActiveCategories());
     }
 
     @GetMapping("/inactive")
-    public List<Category> getInactiveCategories() {
-        return categoryService.getInactiveCategories();
+    public ResponseEntity<List<Category>> getInactiveCategories() {
+        return ResponseEntity.ok(categoryService.getInactiveCategories());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-  // Change this to match your token's role
     @PutMapping("/{id}/activate")
-    public void activateCategory(@PathVariable String id) {
+    public ResponseEntity<Void> activateCategory(@PathVariable String id) {
         categoryService.activateCategory(id);
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
- // Change this to match your token's role
     @PutMapping("/{id}/deactivate")
-    public void deactivateCategory(@PathVariable String id) {
+    public ResponseEntity<Void> deactivateCategory(@PathVariable String id) {
         categoryService.deactivateCategory(id);
+        return ResponseEntity.ok().build();
     }
 }

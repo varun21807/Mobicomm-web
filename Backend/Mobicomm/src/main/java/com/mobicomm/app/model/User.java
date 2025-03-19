@@ -39,9 +39,6 @@ public class User {
     @JsonManagedReference("user-address")
     private List<Address> addresses;
 
-   
-
-  
 
     
 }

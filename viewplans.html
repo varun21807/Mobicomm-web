@@ -182,7 +182,7 @@
             <p id="error-message" class="text-danger mt-2" style="display: none; font-size: 14px;"></p>
 
             <!-- Continue Button -->
-            <button type="button" class="btn gradient-btn w-100 py-2 mt-4" id="continue-btn">
+            <button type="button" class="btn gradient-btn w-100 py-2 mt-4" id="continue">
                 Continue
             </button>
         </div>
@@ -191,6 +191,7 @@
 
 
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
      <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -243,6 +244,309 @@
             });
         });
     }
+    document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ Page Loaded, Initializing Payment Setup...");
+    setupPaymentButton();
+});
+
+// ✅ Open Recharge Modal & Store Plan Data
+function openRechargeModal(button) {
+    const planData = JSON.parse(button.getAttribute("data-plan"));
+    sessionStorage.setItem("selectedPlan", JSON.stringify(planData));
+
+    let modalElement = document.getElementById("getplanModal");
+    if (!modalElement) {
+        console.error("❌ Modal element not found!");
+        return;
+    }
+
+    let modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+// ✅ Validate Mobile Number
+async function validateMobileNumberModal() {
+    let mobileInput = document.getElementById("phone2");
+    let errorText = document.getElementById("error-message");
+    let continueButton = document.getElementById("continue");
+
+    if (!mobileInput || !errorText || !continueButton) {
+        console.error("❌ Required elements not found!");
+        return;
+    }
+
+    let mobileNumber = mobileInput.value.trim();
+    if (!/^[6-9]\d{9}$/.test(mobileNumber)) {
+        errorText.innerText = "Please enter a valid 10-digit mobile number.";
+        errorText.style.display = "block";
+        continueButton.disabled = true;
+        return;
+    }
+
+    try {
+        console.log("🔄 Checking user for mobile number:", mobileNumber);
+        const response = await fetch(`http://localhost:8081/api/users/phone/${mobileNumber}`);
+
+        if (!response.ok) throw new Error(`Mobile number not found. Status: ${response.status}`);
+
+        const user = await response.json();
+        console.log("✅ User data fetched:", user);
+
+        if (!user.userEmail) {
+            console.warn("⚠️ No email found for this user.");
+        }
+
+        // Ensure empty values are stored properly
+        sessionStorage.setItem("mobileNumber", mobileNumber);
+        sessionStorage.setItem("userDetails", JSON.stringify({
+            userId: user.userId,
+            userName: user.userName,
+            userEmail: user.userEmail || "", // Default to empty string if missing
+            phoneNumber: user.phoneNumber,
+            dateOfBirth: user.dateOfBirth,
+            status: user.status,
+            addresses: user.addresses
+        }));
+
+        console.log("📌 Stored in sessionStorage:", {
+            mobileNumber: sessionStorage.getItem("mobileNumber"),
+            userDetails: sessionStorage.getItem("userDetails")
+        });
+
+        errorText.style.display = "none";
+        continueButton.disabled = false;
+    } catch (error) {
+        console.error("❌ Error fetching user data:", error.message);
+        errorText.innerText = "Mobile number not found. Please enter a valid number.";
+        errorText.style.display = "block";
+        continueButton.disabled = true;
+    }
+}
+
+// ✅ Setup Payment Button
+function setupPaymentButton() {
+    const payButton = document.getElementById("continue");
+    if (!payButton) {
+        console.error("❌ Pay Button not found on the page!");
+        return;
+    }
+
+    payButton.addEventListener("click", async function () {
+        console.log("🛒 Pay Button Clicked! Initiating Payment...");
+
+        try {
+            const orderData = await createOrder();
+            if (!orderData || !orderData.id) {
+                console.error("⚠️ Invalid Order Response:", orderData);
+                alert("Failed to get payment session. Check console.");
+                return;
+            }
+
+            console.log("✅ Order Created Successfully. Razorpay Order ID:", orderData.id);
+            startRazorpayPayment(orderData);
+        } catch (error) {
+            console.error("❌ Payment Process Failed:", error);
+            alert("Payment process failed. Check console.");
+        }
+    });
+}
+// ✅ Create Order API Request (Backend)
+async function createOrder() {
+    console.log("🔄 Creating Order with Backend...");
+
+    const mobileNumber = sessionStorage.getItem("mobileNumber");
+    const selectedPlan = JSON.parse(sessionStorage.getItem("selectedPlan"));
+
+    if (!mobileNumber || !selectedPlan) {
+        console.error("❌ Missing order details.");
+        alert("Error: Missing mobile number or plan details.");
+        return null;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:8081/api/payment/create-order?amount=${selectedPlan.price}`, {
+            method: "POST"
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`❌ Request Failed: ${response.status} - ${errorText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("❌ Order Creation Failed:", error.message);
+        alert("Payment failed. Please try again.");
+        return null;
+    }
+}
+
+// ✅ Start Razorpay Payment
+function startRazorpayPayment(orderData) {
+    const options = {
+        key: "rzp_test_7jbN2F87afR6Hf",
+        amount: orderData.amount,
+        currency: "INR",
+        name: "MobiComm",
+        description: "Recharge Payment",
+        order_id: orderData.id,
+        handler: function (response) {
+            console.log("✅ Payment Successful:", response);
+            handlePaymentSuccess(orderData.id, response.razorpay_payment_id);
+        },
+        prefill: {
+            contact: sessionStorage.getItem("mobileNumber")
+        },
+        theme: {
+            color: "#512DA8"
+        }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+}
+// ✅ Handle Payment Success
+async function handlePaymentSuccess(orderId, paymentId) {
+    console.log("📡 Storing Recharge Details in Backend...");
+
+    const mobileNumber = sessionStorage.getItem("mobileNumber");
+    const selectedPlan = JSON.parse(sessionStorage.getItem("selectedPlan"));
+    const userDetails = JSON.parse(sessionStorage.getItem("userDetails"));
+
+    console.log("📩 User Details from Session:", userDetails); // Debugging
+    console.log("📦 Selected Plan from Session:", selectedPlan);
+
+    if (!mobileNumber || !selectedPlan || !orderId) {
+        console.error("❌ Missing order details. Cannot store recharge history.");
+        alert("Error: Missing required details for recharge.");
+        return;
+    }
+
+    // Ensure plan name is correctly extracted
+    const planName = selectedPlan.planName || selectedPlan.name || "Unknown Plan";
+
+    const requestBody = {
+        transactionId: paymentId,
+        planId: selectedPlan.planId,
+        mobileNumber: mobileNumber,
+        amount: selectedPlan.price,
+        paymentMethod: "Razorpay",
+        status: "PAID"
+    };
+
+    try {
+        const response = await fetch("http://localhost:8081/api/payment/verify-payment", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        const responseData = await response.json();
+        if (!response.ok) {
+            throw new Error(`❌ API Error: ${response.status} - ${responseData?.message || "Unknown error"}`);
+        }
+
+        console.log("✅ Recharge Data Stored Successfully:", responseData);
+        alert(responseData?.message || "Recharge Successful! Plan Activated.");
+
+        // Ensure email exists before sending confirmation
+        if (userDetails && userDetails.userEmail) {
+            sendEmailConfirmation(userDetails.userEmail, paymentId, mobileNumber, planName, selectedPlan.price, "Razorpay");
+        } else {
+            console.warn("⚠️ No email found, skipping email confirmation.");
+        }
+    } catch (error) {
+        console.error("❌ Failed to Store Recharge Details:", error);
+        alert("Recharge was not stored. Check console for details.");
+    }
+}
+
+async function sendEmailConfirmation(userEmail, transactionId, mobileNumber, planName, amount, paymentMethod) {
+    console.log("📩 Final Email Data:", {
+    userEmail, transactionId, mobileNumber, planName, amount, paymentMethod
+});
+    console.log("\ud83d\udce9 Sending email to:", userEmail);
+
+    if (!userEmail) {
+        console.error("\u274c Error: Email is null or undefined");
+        alert("Email address is missing!");
+        return;
+    }
+
+    const emailBody = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
+            <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1);">
+                <h2 style="color: #512DA8; text-align: center;">\u2728 Payment Successful! \u2728</h2>
+                <hr style="border: 1px solid #ddd;">
+                <p style="font-size: 16px; color: #424242;">Dear Customer,</p>
+                <p style="font-size: 16px; color: #424242;">We are thrilled to inform you that your recharge was <strong>successfully completed</strong>! Here are the details of your transaction:</p>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">\ud83c\udfe0 Mobile Number:</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${mobileNumber}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">\ud83d\udcb3 Payment Method:</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${paymentMethod}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">\ud83d\udcda Plan:</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${planName}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">\ud83d\udcb8 Amount Paid:</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">\u20b9${amount}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">\ud83c\udfc6 Transaction ID:</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${transactionId}</td>
+                    </tr>
+                </table>
+
+                <p style="font-size: 16px; color: #424242; margin-top: 20px;">Thank you for choosing <strong>MobiComm</strong>. If you have any questions, feel free to contact our support team.</p>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="http://127.0.0.1:5503/index.html" style="padding: 10px 20px; background-color: #512DA8; color: white; text-decoration: none; border-radius: 5px; font-size: 16px;">Visit Our Website</a>
+                </div>
+
+                <p style="font-size: 14px; color: #777; text-align: center; margin-top: 20px;">\u00a9 ${new Date().getFullYear()} MobiComm. All rights reserved.</p>
+            </div>
+        </div>
+    `;
+
+    try {
+        const response = await fetch("http://localhost:8081/email/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                to: userEmail,
+                subject: "\u2728 MobiComm - Payment Successful! \u2728",
+                body: emailBody
+            })
+        });
+
+        if (response.ok) {
+            alert("Email confirmation sent successfully!");
+        } else {
+            alert("Failed to send email confirmation.");
+        }
+    } catch (error) {
+        console.error("\u274c Error sending email:", error);
+        alert("Error sending email.");
+    }
+}
+
+
+
+// Attach event listener for the modal input
+document.getElementById("phone2").addEventListener("input", function () {
+    validateMobileNumberModal();
+});
+
+
     </script>
     
         

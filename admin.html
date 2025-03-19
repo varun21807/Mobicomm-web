@@ -556,95 +556,127 @@
 //     }
 // });
 //json
-document.addEventListener("DOMContentLoaded", fetchExpiringSubscribers);
-
+document.addEventListener("DOMContentLoaded", function () {
+    fetchExpiringSubscribers();
+});
 function fetchExpiringSubscribers() {
-    fetch("http://localhost:3000/customers")
-        .then(response => response.json())
-        .then(customers => {
-            const today = new Date();
-            const expiringTableBody = document.getElementById("expiringSubscribersTable");
-            expiringTableBody.innerHTML = ""; // Clear previous data
-            console.log("Fetched Customers:", customers);
-
-            const expiringCustomers = customers.filter(cust => {
-    if (!cust.currentPlan || !cust.currentPlan.expiryDate) return false;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalize time
-
-    const expiryDate = new Date(cust.currentPlan.expiryDate);
-    expiryDate.setHours(0, 0, 0, 0); // Normalize time
-
-    const remainingDays = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
-
-    console.log(`${cust.name}: Expires on ${expiryDate.toISOString().split("T")[0]}, Remaining Days: ${remainingDays}`);
-
-    return remainingDays >= 1 && remainingDays <= 3;
-});
-
-
-            expiringCustomers.forEach(customer => {
-    const expiryDate = new Date(customer.currentPlan.expiryDate);
-    const remainingDays = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-
-    let badgeClass = remainingDays === 3 ? "bg-danger" :
-                     remainingDays === 2 ? "bg-warning" :
-                     "bg-success";
-
-    const row = document.createElement("tr");
-    row.setAttribute("onclick", `showHistory('${customer.customerId}', '${customer.name}', '${customer.mobile}')`);
-    row.innerHTML = `
-        <td>${customer.customerId}</td>
-        <td>${customer.name}</td>
-        <td>${customer.mobile}</td>
-        <td>${customer.email}</td>
-        <td><span class="badge ${badgeClass}">${remainingDays} Days</span></td>
-        <td><button class="btn btn-notify"><i class="bi bi-bell-fill"></i> Notify</button></td> `;
-    expiringTableBody.appendChild(row);
-});
-
+    fetch("http://localhost:8081/api/recharge-history/expiring-soon")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
         })
-        .catch(error => console.error("Error fetching expiring subscribers:", error));
-       
-
+        .then(data => updateExpiringSubscribersTable(data))
+        .catch(error => {
+            console.error("Error fetching expiring subscribers:", error);
+            showErrorMessage("Failed to fetch expiring subscribers.");
+        });
 }
 
-function showHistory(customerId) {
-    fetch("http://localhost:3000/customers")
-        .then(response => response.json())
-        .then(customers => {
-            const customer = customers.find(c => c.customerId === customerId);
-            if (!customer) {
-                console.error("Customer not found.");
-                return;
-            }
+function updateExpiringSubscribersTable(subscribers) {
+    const tableBody = document.getElementById("expiringSubscribersTable");
+    tableBody.innerHTML = "";
 
-            // Update modal title and customer details
-            document.getElementById("customerName").textContent = customer.name;
-            document.getElementById("customerMobile").textContent = customer.mobile;
+    if (!subscribers || subscribers.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No expiring subscribers found.</td></tr>`;
+        return;
+    }
 
-            // Get history table body
-            const historyTable = document.getElementById("historyTable");
-            historyTable.innerHTML = ""; // Clear previous data
+    subscribers.forEach(subscriber => {
+        const row = document.createElement("tr");
 
-            // Populate table with recharge history
-            customer.rechargeHistory.forEach(history => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${history.rechargeDate}</td>
-                    <td>${history.title}</td>
-                    <td>₹${history.price}</td>
-                    <td>${new Date(history.expiryDate) > new Date() ? "Active" : "Expired"}</td>
-                `;
-                historyTable.appendChild(row);
-            });
+        row.innerHTML = `
+            <td>${subscriber.userId}</td>
+            <td>${subscriber.userName}</td>
+            <td>${subscriber.phoneNumber}</td>
+            <td>${subscriber.userEmail || "N/A"}</td>
+            <td>${formatExpiringDate(subscriber.expiryDate)}</td>
+            <td>
+                <button class="btn btn-warning notify-btn" 
+                        onclick="notifyUser('${subscriber.phoneNumber}', '${subscriber.userEmail}', '${subscriber.userName}', '${subscriber.expiryDate}', '${subscriber.planAmount}')">
+                    <i class="fas fa-bell"></i> Notify
+                </button>
+            </td>
+        `;
 
-            // Show the modal
-            const modal = new bootstrap.Modal(document.getElementById("historyModal"));
-            modal.show();
-        })
-        .catch(error => console.error("Error fetching recharge history:", error));
+        tableBody.appendChild(row);
+    });
+}
+
+function formatExpiringDate(expiringIn) {
+    if (!expiringIn) return "Unknown";
+
+    const expirationDate = new Date(expiringIn);
+    const today = new Date();
+    const diffTime = expirationDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays > 0 ? `${diffDays} days remaining` : "Expired";
+}
+function notifyUser(phoneNumber, userEmail, userName, expiryDate, planAmount) {
+    if (!userEmail) {
+        alert("User email is missing! Cannot send notification.");
+        return;
+    }
+
+
+    const emailHTML = `
+        <div style="font-family: Arial, sans-serif; text-align: center; background-color: #f8f9fa; padding: 20px;">
+            <div style="max-width: 600px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                <h2 style="color: #673AB7;">⚠️ Your Plan is About to Expire!</h2>
+                <p>Dear <strong>${userName}</strong>,</p>
+                <p>🚀 Your prepaid plan is expiring soon! Recharge now to continue enjoying uninterrupted services.</p>
+                <hr>
+                <p><strong>📅 Expiry Date:</strong> ${expiryDate}</p>
+                <p><strong>💰 Plan Amount:</strong> ₹${planAmount}</p>
+                <a href="https://yourwebsite.com/recharge" 
+                   style="display: inline-block; padding: 12px 20px; background-color: #512DA8; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px;">
+                    🔗 Recharge Now
+                </a>
+                <p style="margin-top: 20px; font-size: 12px; color: #888;">If you have already recharged, please ignore this message.</p>
+                <p>Best Regards,</p>
+                <p><strong>MobiComm Team</strong></p>
+            </div>
+        </div>`;
+
+        fetch("http://localhost:8081/api/send-notification", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        toEmail: userEmail,
+        subject: "⚠️ Your Plan is About to Expire – Recharge Now!",
+        htmlContent: emailHTML
+    }),
+})
+.then(response => response.text())  // Expecting plain text, not JSON
+.then(message => {
+    console.log("Server Response:", message);
+    alert(message);  // Show success or failure message from backend
+    disableNotifyButton(phoneNumber);
+})
+.catch(error => {
+    console.error("Error sending notification:", error);
+    alert("Failed to send notification.");
+});
+}
+
+function disableNotifyButton(phoneNumber) {
+    document.querySelectorAll(".notify-btn").forEach(button => {
+        if (button.getAttribute("onclick").includes(phoneNumber)) {
+            button.disabled = true;
+            button.innerHTML = `<i class="fas fa-check"></i> Notified`;
+            button.classList.remove("btn-warning");
+            button.classList.add("btn-success");
+        }
+    });
+}
+
+
+
+function showErrorMessage(message) {
+    const tableBody = document.getElementById("expiringSubscribersTable");
+    tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">${message}</td></tr>`;
 }
 
 

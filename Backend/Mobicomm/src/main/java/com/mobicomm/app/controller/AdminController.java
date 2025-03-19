@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://127.0.0.1:5503")
+@CrossOrigin(origins = {"http://127.0.0.1:5503", "http://localhost:5503"})
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {

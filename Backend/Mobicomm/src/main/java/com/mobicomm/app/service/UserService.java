@@ -54,7 +54,6 @@ public class UserService {
     public User saveUser(User user) {
         user.setUserId(generateUserId());
 
-        // ✅ Encode password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         for (Address address : user.getAddresses()) {
@@ -80,7 +79,6 @@ public class UserService {
         existingUser.setDateOfBirth(updatedUser.getDateOfBirth());
         existingUser.setStatus(updatedUser.getStatus());
 
-        // ✅ If password is updated, encode it
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }

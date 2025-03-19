@@ -1,8 +1,10 @@
 package com.mobicomm.app.controller;
 
+import com.mobicomm.app.exception.UserNotFoundException;
 import com.mobicomm.app.model.User;
 import com.mobicomm.app.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = {"http://127.0.0.1:5503", "http://localhost:5503"})
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -21,46 +24,55 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+        List<User> users = userService.getAllUsers();
+        if (users.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content if no users
+        }
+        return ResponseEntity.ok(users); // 200 OK
     }
 
     // ✅ Only ADMIN and the specific user can access their own details
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal.username")
-    public ResponseEntity<User> getUserById(@PathVariable String userId) {
+    public ResponseEntity<Optional<User>> getUserById(@PathVariable String userId) {
         Optional<User> user = userService.getUserById(userId);
-        return user.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(user); // 200 OK
     }
 
-    // ✅ Get user by phone number (Only ADMIN or the specific user can access their own details)
     @GetMapping("/phone/{phoneNumber}")
-
-    public ResponseEntity<User> getUserByPhoneNumber(@PathVariable String phoneNumber) {
+    public ResponseEntity<Optional<User>> getUserByPhoneNumber(@PathVariable String phoneNumber) {
         Optional<User> user = userService.getUserByPhoneNumber(phoneNumber);
-        return user.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(user); // 200 OK
     }
 
-    // ✅ Only ADMIN can create users (Self-registration not allowed)
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.saveUser(user));
+        User createdUser = userService.saveUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    // ✅ Only ADMIN or the specific user can update their profile
     @PutMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal.username")
     public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody User updatedUser) {
-        return ResponseEntity.ok(userService.updateUser(userId, updatedUser));
+        User user = userService.updateUser(userId, updatedUser);
+        return ResponseEntity.ok(user);
     }
 
-    // ✅ Only ADMIN can delete users
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGlobalException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + ex.getMessage()); // 500 Internal Server Error
     }
 }

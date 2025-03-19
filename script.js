@@ -292,61 +292,97 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     
-    document.querySelector(".login-btn").addEventListener("click", function () {
-        const phoneInput = document.getElementById("phone").value.trim();
-        const phoneRegex = /^[6-9]\d{9}$/;
+    // document.querySelector(".login-btn").addEventListener("click", function () {
+    //     const phoneInput = document.getElementById("phone").value.trim();
+    //     const phoneRegex = /^[6-9]\d{9}$/;
     
-        if (!phoneRegex.test(phoneInput)) {
-            alert("Invalid phone number. It should start with 6-9 and be 10 digits long.");
-            return;
-        }
+    //     if (!phoneRegex.test(phoneInput)) {
+    //         alert("Invalid phone number. It should start with 6-9 and be 10 digits long.");
+    //         return;
+    //     }
     
         // Simulate OTP validation (You can replace this with actual OTP verification)
-        const otpInput = document.getElementById("otp").value.trim();
-        if (otpInput.length !== 6) {
-            alert("Invalid OTP. Please enter a 6-digit OTP.");
-            return;
-        }
+    //     const otpInput = document.getElementById("otp").value.trim();
+    //     if (otpInput.length !== 6) {
+    //         alert("Invalid OTP. Please enter a 6-digit OTP.");
+    //         return;
+    //     }
     
-        // Store login state
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("userPhone", phoneInput);
+    //     // Store login state
+    //     localStorage.setItem("isLoggedIn", "true");
+    //     localStorage.setItem("userPhone", phoneInput);
     
-        // Redirect to home page
-        window.location.href = "index.html";  // Change to your home page
-    });
+    //     // Redirect to home page
+    //     window.location.href = "index.html";  // Change to your home page
+    // });
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     const dropdownMenu = document.getElementById("dropdownMenu");
+    
+    //     if (localStorage.getItem("isLoggedIn") === "true") {
+    //         dropdownMenu.innerHTML = `
+    //             <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+    //             <li><a class="dropdown-item" href="#" id="logoutLink">Logout</a></li>
+    //         `;
+    
+    //         document.getElementById("logoutLink").addEventListener("click", function () {
+    //             localStorage.removeItem("isLoggedIn");
+    //             localStorage.removeItem("userPhone");
+    //             window.location.reload(); // Refresh to update the dropdown
+    //         });
+    //     }
+    // });
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     let links = document.querySelectorAll(".nav-link");
+    //     let currentPage = window.location.pathname.split("/").pop();
+    //     console.log("Current Page:", currentPage); // Debugging: Check current page
+    
+    //     links.forEach(link => {
+    //         console.log("Checking link:", link.getAttribute("href")); // Debugging: Check each link
+    //         if (link.getAttribute("href") === currentPage) {
+    //             link.classList.add("active");
+    //             console.log("Active link set:", link.textContent); // Debugging: Confirm active link
+    //         } else {
+    //             link.classList.remove("active");
+    //         }
+    //     });
+    // });
+    
     document.addEventListener("DOMContentLoaded", function () {
+        const loginBtn = document.querySelector(".login-btn");
         const dropdownMenu = document.getElementById("dropdownMenu");
+        const loginLink = document.getElementById("loginLink");
     
-        if (localStorage.getItem("isLoggedIn") === "true") {
-            dropdownMenu.innerHTML = `
-                <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-                <li><a class="dropdown-item" href="#" id="logoutLink">Logout</a></li>
-            `;
+        // Function to update the dropdown menu after login
+        function updateDropdown() {
+            const accessToken = localStorage.getItem("accessToken");
     
-            document.getElementById("logoutLink").addEventListener("click", function () {
-                localStorage.removeItem("isLoggedIn");
-                localStorage.removeItem("userPhone");
-                window.location.reload(); // Refresh to update the dropdown
-            });
-        }
-    });
-    document.addEventListener("DOMContentLoaded", function () {
-        let links = document.querySelectorAll(".nav-link");
-        let currentPage = window.location.pathname.split("/").pop();
-        console.log("Current Page:", currentPage); // Debugging: Check current page
+            if (accessToken) {
+                // User is logged in, show Profile and Logout
+                dropdownMenu.innerHTML = `
+                    <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+                    <li><a class="dropdown-item" href="#" id="logoutLink">Logout</a></li>
+                `;
     
-        links.forEach(link => {
-            console.log("Checking link:", link.getAttribute("href")); // Debugging: Check each link
-            if (link.getAttribute("href") === currentPage) {
-                link.classList.add("active");
-                console.log("Active link set:", link.textContent); // Debugging: Confirm active link
+                // Add event listener to Logout button
+                document.getElementById("logoutLink").addEventListener("click", function () {
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("refreshToken");
+                    alert("Logged out successfully!");
+                    location.reload(); // Reload page to update UI
+                });
             } else {
-                link.classList.remove("active");
+                // User is not logged in, show Login
+                dropdownMenu.innerHTML = `
+                    <li><a class="dropdown-item" href="login-page.html" id="loginLink">Login</a></li>
+                `;
             }
-        });
-    });
+        }
     
+        // Check login status on page load
+        updateDropdown();
+    
+     
+    });
     
     
 

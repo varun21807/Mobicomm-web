@@ -1,15 +1,16 @@
 package com.mobicomm.app.model;
 
-
-
 import lombok.Data;
-
-import java.util.Map;
 
 @Data
 public class PaymentRequest {
     private String orderId;
-    private double orderAmount;
-    private String orderCurrency;
-    private Map<String, String> customerDetails;
+    private Double order_amount;
+    private String order_currency;
+    private String customerPhone;
+    private String customerEmail;
+    private String customerName;
+    private String returnUrl;  // ✅ Added
+    private String notifyUrl;  // ✅ Added
+    private String planId;
 }
