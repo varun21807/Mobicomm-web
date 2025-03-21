@@ -35,31 +35,29 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
 
                 // ✅ Allow public access to recharge APIs (without authentication)
-                .requestMatchers(HttpMethod.POST, "/api/purchase/new").permitAll()  // Allow recharges without login
-                .requestMatchers(HttpMethod.GET, "/api/users/phone/**").permitAll() // Allow mobile number lookup
+                .requestMatchers(HttpMethod.POST, "/api/purchase/new").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/users/phone/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/payment/create-order").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/payment/verify-payment").permitAll() // ✅ Allow payment verification without authentication
+                .requestMatchers(HttpMethod.POST, "/api/payment/verify-payment").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/payment/recharge-history/**", "/api/payment/active-plans/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/recharge-history/**").permitAll()
-
-                // ✅ Give Access to Expiring Subscribers API
                 .requestMatchers(HttpMethod.GET, "/api/recharge-history/expiring-soon").permitAll()
-
-                // ✅ Allow public email sending
                 .requestMatchers(HttpMethod.POST, "/email/send").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/send-notification").permitAll()
-
-                // ✅ Public API Access
                 .requestMatchers(HttpMethod.GET, "/api/categories", "/api/subcategories", "/api/plans", "/api/ott").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 
-                // ❌ All other APIs require authentication
-                .requestMatchers(HttpMethod.GET, "/api/users/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/purchase/history", "/api/purchase/active-plans").authenticated()
+                // ✅ Allow public admin creation
+                .requestMatchers(HttpMethod.POST, "/api/admin/add").permitAll() 
+
+                // ❌ Restrict other admin endpoints
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                // ✅ Restrict category and plan management to admin
                 .requestMatchers("/api/categories/**", "/api/subcategories/**", "/api/plans/**", "/api/ott/**").hasRole("ADMIN")
 
+                // ❌ Require authentication for all other APIs
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

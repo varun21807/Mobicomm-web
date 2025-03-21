@@ -398,7 +398,7 @@ function startRazorpayPayment(orderData) {
             contact: sessionStorage.getItem("mobileNumber")
         },
         theme: {
-            color: "#512DA8"
+            color: "#B200B8"
         }
     };
 
@@ -530,6 +530,7 @@ async function sendEmailConfirmation(userEmail, transactionId, mobileNumber, pla
 
         if (response.ok) {
             alert("Email confirmation sent successfully!");
+            window.location.href = "index.html";
         } else {
             alert("Failed to send email confirmation.");
         }
@@ -537,6 +538,7 @@ async function sendEmailConfirmation(userEmail, transactionId, mobileNumber, pla
         console.error("\u274c Error sending email:", error);
         alert("Error sending email.");
     }
+
 }
 
 
