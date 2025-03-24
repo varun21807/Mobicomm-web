@@ -1,21 +1,13 @@
 package com.mobicomm.app.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import com.mobicomm.app.model.Plan;
 import com.mobicomm.app.model.RechargeHistory;
@@ -39,19 +31,19 @@ public class RechargeHistoryService {
     @Autowired
     private JavaMailSender mailSender;
 
-    // Get the currently authenticated user's phone number
+    // ✅ Get the currently authenticated user's phone number
     private String getAuthenticatedPhoneNumber() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName(); // Directly use as a string
     }
 
-    // Get Recharge History by Phone Number
+    // ✅ Get Recharge History by Phone Number
     public List<RechargeHistory> getRechargeHistoryByPhoneNumber(String phoneNumber) {
         return rechargeHistoryRepository.findByPhoneNumber(phoneNumber);
     }
 
-    // Add a new Recharge Record
-    public RechargeHistory addRecharge(String planId, double amountPaid, String phoneNumber) {
+    // ✅ Add a new Recharge Record with Payment Status
+    public RechargeHistory addRecharge(String planId, double amountPaid, String phoneNumber, String paymentMethod, String paymentStatus) {
         User user = userRepository.findByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -59,16 +51,21 @@ public class RechargeHistoryService {
                 .orElseThrow(() -> new RuntimeException("Plan not found"));
 
         RechargeHistory recharge = new RechargeHistory();
-        recharge.setId("RECH-" + UUID.randomUUID().toString().substring(0, 8));
+        recharge.setId("RECH-" + UUID.randomUUID().toString().substring(0, 8)); // ✅ Unique Recharge ID
         recharge.setPhoneNumber(phoneNumber);
-        recharge.setId(user.getUserId());
         recharge.setPlan(plan);
         recharge.setRechargeDate(LocalDateTime.now());
         recharge.setAmount(amountPaid);
-        recharge.setPaymentMethod("Razorpay");
+        recharge.setPaymentMethod(paymentMethod);
+        recharge.setStatus(paymentStatus); // ✅ Store payment status from Razorpay API
+
+        int validityDays = Math.max(plan.getValidity(), 1);
+        recharge.setExpiryDate(recharge.getRechargeDate().plusDays(validityDays));
 
         return rechargeHistoryRepository.save(recharge);
     }
+
+    // ✅ Fetch Users Whose Plans Expire in 7 Days
     public List<Map<String, Object>> getExpiringSubscribers() {
         LocalDateTime sevenDaysLater = LocalDateTime.now().plusDays(7);
         
@@ -87,7 +84,7 @@ public class RechargeHistoryService {
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 
-                // Create a response map
+                // ✅ Create response map
                 Map<String, Object> subscriberInfo = new HashMap<>();
                 subscriberInfo.put("phoneNumber", phoneNumber);
                 subscriberInfo.put("userId", user.getUserId());
@@ -101,6 +98,4 @@ public class RechargeHistoryService {
 
         return expiringSubscribers;
     }
-
-
 }

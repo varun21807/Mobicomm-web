@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/categories", "/api/subcategories", "/api/plans", "/api/ott").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-
+                .requestMatchers("/api/payment/**").permitAll()
                 // ✅ Allow public admin creation
                 .requestMatchers(HttpMethod.POST, "/api/admin/add").permitAll() 
 

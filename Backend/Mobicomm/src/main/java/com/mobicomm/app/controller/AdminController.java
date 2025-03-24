@@ -21,6 +21,7 @@ public class AdminController {
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
+    
 
     // ✅ Add a new admin with addresses (Restricted to ADMIN)
     @PostMapping("/add")
@@ -56,10 +57,4 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ Secure admin dashboard endpoint
-    @GetMapping("/dashboard")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<String> getAdminDashboard() {
-        return ResponseEntity.ok("Welcome to Admin Dashboard");
-    }
 }

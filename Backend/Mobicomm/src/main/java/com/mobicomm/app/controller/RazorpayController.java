@@ -4,49 +4,70 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import com.mobicomm.app.service.RazorpayService;
+import com.razorpay.Payment;
+import com.razorpay.RazorpayClient;
 
 @CrossOrigin(origins = {"http://127.0.0.1:5503", "http://localhost:5503"})
 @RestController
 @RequestMapping("/api/payment")
 public class RazorpayController {
 
+	 @Value("${razorpay.api.key}")
+	    private String apiKey;
+
+	    @Value("${razorpay.api.secret}")
+	    private String apiSecret;
+	    
     @Autowired
     private RazorpayService razorpayService;
-
     @PostMapping("/create-order")
-    public String createOrder(@RequestParam double amount) {
+    public ResponseEntity<?> createOrder(@RequestParam long amount) {  // ✅ Use long instead of double
         try {
-            return razorpayService.createOrder(amount * 100);
+            String order = razorpayService.createOrder(amount); // ✅ No extra * 100
+            return ResponseEntity.ok(new JSONObject(order).toString());
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to create order");
+            errorResponse.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
-    
+
+
     private static final String RAZORPAY_KEY_ID = "rzp_test_7jbN2F87afR6Hf";
     private static final String RAZORPAY_SECRET = "fRGO8y1UD7OT33jN2oV3n3HN";
 
-    @GetMapping("/payment-details/{paymentId}")
-    public ResponseEntity<String> getPaymentDetails(@PathVariable String paymentId) {
-        String apiUrl = "https://api.razorpay.com/v1/payments/" + paymentId;
+    @GetMapping("/details/{paymentId}")
+    public Map<String, Object> getPaymentDetails(@PathVariable String paymentId) {
+        try {
+            RazorpayClient razorpay = new RazorpayClient(apiKey, apiSecret);
+            Payment payment = razorpay.payments.fetch(paymentId);
 
-        HttpHeaders headers = new HttpHeaders();
-        String auth = Base64.getEncoder().encodeToString((RAZORPAY_KEY_ID + ":" + RAZORPAY_SECRET).getBytes());
-        headers.setBasicAuth(auth);
+            Map<String, Object> paymentDetails = new HashMap<>();
+            paymentDetails.put("id", payment.get("id"));
+            paymentDetails.put("amount", payment.get("amount"));
+            paymentDetails.put("currency", payment.get("currency"));
+            paymentDetails.put("status", payment.get("status"));
+            paymentDetails.put("method", payment.get("method"));
+            paymentDetails.put("order_id", payment.get("order_id"));
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
-        return response;
+            return paymentDetails;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch payment details: " + e.getMessage());
+        }
     }
 
     @PostMapping("/verify-payment")
@@ -69,6 +90,13 @@ public class RazorpayController {
                 return ResponseEntity.badRequest().body(response);
             }
 
+            String transactionId = paymentData.get("transactionId"); // ✅ Fix: Use transactionId, NOT paymentMethod
+            if (transactionId == null || transactionId.trim().isEmpty()) {
+                response.put("status", "error");
+                response.put("message", "Transaction ID is missing");
+                return ResponseEntity.badRequest().body(response);
+            }
+
             String paymentMethod = paymentData.get("paymentMethod");
             if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
                 response.put("status", "error");
@@ -85,11 +113,12 @@ public class RazorpayController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Debugging user lookup
+            // Debugging logs
             System.out.println("🔍 Checking user in DB for phone: " + phoneNumber);
+            System.out.println("🔍 Verifying payment for Transaction ID: " + transactionId);
 
-            // Store recharge history with payment method
-            razorpayService.storeRechargeHistory(phoneNumber, planId, amount, paymentMethod);
+            // ✅ Fix: Pass transactionId instead of paymentMethod
+            razorpayService.storeRechargeHistory(phoneNumber, planId, amount, transactionId);
 
             // ✅ SUCCESS RESPONSE IN JSON FORMAT
             response.put("status", "success");
@@ -103,6 +132,5 @@ public class RazorpayController {
             return ResponseEntity.badRequest().body(response);
         }
     }
-
 
 }

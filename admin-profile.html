@@ -59,8 +59,7 @@
 <body>
 
     <div class="profile-container">
-        <img src="https://via.placeholder.com/120" alt="Profile" class="profile-img">
-        <input type="file" class="form-control mt-2" accept="image/*">
+ 
         
         <div class="profile-info">
             <h3>Admin Name</h3>
@@ -71,11 +70,11 @@
             <p><strong>Email:</strong> admin@example.com</p>
             <p><strong>Contact:</strong> +91 9876543210</p>
             <p><strong>Address:</strong> 123, Admin Street, City</p>
-            <p><strong>Joining Date:</strong> Jan 1, 2023</p>
+        
         </div>
         
         <button class="btn btn-custom w-100 mt-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
-        <button class="btn btn-danger w-100 mt-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
+      
     </div>
 
     <!-- Edit Profile Modal -->
@@ -100,26 +99,7 @@
         </div>
     </div>
 
-    <!-- Change Password Modal -->
-    <div class="modal fade" id="changePasswordModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Change Password</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="password" class="form-control mb-2" placeholder="Current Password">
-                    <input type="password" class="form-control mb-2" placeholder="New Password">
-                    <input type="password" class="form-control mb-2" placeholder="Confirm Password">
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button class="btn btn-danger">Update Password</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
 </body>
 </html>

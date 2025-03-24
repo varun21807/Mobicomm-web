@@ -18,19 +18,21 @@
 <body>
     <header >
         <!-- Logo (No Blur) -->
-        <div class="logo text-dark">Mobi-Comm</div>
+        <div class="text-dark logo">
+            <img src="/assets/imges/mobicomm-logo-blacj.png" alt="" width="50%">
+        </div>
         <div class="navbar-container">
             <nav class="navbar navbar-expand-lg glass-navbar" id="dynamicNavbar">
                 <div class="container-fluid justify-content-center">
                     <div class="navbar-nav">
                         <a class="nav-link" href="index.html">
-                            <i class="fas fa-home"></i> Home
+                            <i class="fa-home fas"></i> Home
                         </a>
                         <a class="nav-link active" href="viewplans.html">
-                            <i class="fas fa-list"></i> View Plans
+                            <i class="fa-list fas"></i> View Plans
                         </a>
                         <a class="nav-link" href="contact.html">
-                            <i class="fas fa-envelope"></i> Contact
+                            <i class="fa-envelope fas"></i> Contact
                         </a>
                     </div>
                 </div>
@@ -43,8 +45,8 @@
       
         <!-- My Account Icon (No Blur) -->
         <div class="account-icon">
-            <a class="nav-link dropdown btn-dark" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle text-dark"></i>
+            <a class="btn-dark dropdown nav-link" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="text-dark bi bi-person-circle"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" id="dropdownMenu">
                 <li><a class="dropdown-item" href="login-page.html" id="loginLink">Login</a></li>
@@ -53,14 +55,14 @@
         
               </header>
               
-              <div class="container-fluid mt-2 d-flex justify-content-end">
+              <div class="container-fluid d-flex justify-content-end mt-2">
                 <button class="btn filter-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterCanvas" aria-controls="filterCanvas">
-                    <i class="fas fa-sliders-h"></i> Filter
+                    <i class="fa-sliders-h fas"></i> Filter
                 </button>
             </div>
             
             
-            <div class="offcanvas offcanvas-end " tabindex="-1" id="filterCanvas" aria-labelledby="filterCanvasLabel" style="visibility: visible;">
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="filterCanvas" aria-labelledby="filterCanvasLabel" style="visibility: visible;">
                 <div class="offcanvas-header">
                     <h5 class="offcanvas-title" id="filterCanvasLabel">Filter Plans</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -89,7 +91,7 @@
                     <input type="number" id="minValidity" class="form-control mb-2" placeholder="Min Validity (Days)">
                     <input type="number" id="maxValidity" class="form-control mb-2" placeholder="Max Validity (Days)">
                     
-                    <button class="btn btn-primary mt-3 w-100" onclick="applyFilters()">Apply Filter</button>
+                    <button class="btn btn-primary w-100 mt-3" onclick="applyFilters()">Apply Filter</button>
                 </div>
             </div>
             
@@ -99,14 +101,14 @@
                 <div class="container-fluid pb-5">
                      <div class="row">
                          <!-- Sidebar (Left Navigation) -->
-                         <div class="col-md-3 col-lg-2 sidebar p-3">
-                            <p class="fw-bolder pt-2 pb-2 sidebar-heading" style="font-size: x-large;color: yellow;">Plan Category</p>
+                         <div class="col-lg-2 col-md-3 p-3 sidebar">
+                            <p class="fw-bolder pb-2 pt-2 sidebar-heading" style="font-size: x-large;color: yellow;">Plan Category</p>
                             <div class="nav-container">
-                                <ul class="nav nav-pills flex-nowrap" id="planTabs"></ul>
+                                <ul class="flex-nowrap nav nav-pills" id="planTabs"></ul>
                             </div>
                         </div>
              
-                         <div class="col-md-9 col-lg-10 p-4" data-aos="slide-down" data-aos-delay="200">
+                         <div class="col-lg-10 col-md-9 p-4" data-aos="slide-down" data-aos-delay="200">
                             <div class="tab-content" id="planContent">
                                 <div id="popular_plans"></div>
                                 <div id="true_5g_unlimited"></div>
@@ -133,19 +135,19 @@
         <div class="container-fluid px-5" data-aos="fade-up" data-aos-delay="100">
             <div class="row">
                 <div class="col-lg-4" data-aos="fade-left" data-aos-delay="100">
-                    <p class="display-6 text-white p-3" data-aos="fade-left" data-aos-delay="100" >Mobi-Comm</p>
-                    <p class="lead text-white">"Stay connected, stay ahead—MobiComm makes mobile recharging faster, easier, and more rewarding."</p>
+                    <p class="display-6 p-3 text-white" data-aos="fade-left" data-aos-delay="100" >Mobi-Comm</p>
+                    <p class="text-white lead">"Stay connected, stay ahead—MobiComm makes mobile recharging faster, easier, and more rewarding."</p>
                 </div>
                 <div class="col-lg-4">
-                    <p class="display-6 text-white p-3" data-aos="fade-left" data-aos-delay="100" >Quick Links</p>
+                    <p class="display-6 p-3 text-white" data-aos="fade-left" data-aos-delay="100" >Quick Links</p>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-white text-decoration-none" data-aos="fade-left" data-aos-delay="100">Home</a></li>
-                        <li><a href="viewplans.html" class="text-white text-decoration-none" data-aos="fade-left" data-aos-delay="100">View Plans</a></li>
-                        <li><a href="contact.html" class="text-white text-decoration-none" data-aos="fade-left" data-aos-delay="100">Contact Us</a></li>
+                        <li><a href="#" class="text-decoration-none text-white" data-aos="fade-left" data-aos-delay="100">Home</a></li>
+                        <li><a href="viewplans.html" class="text-decoration-none text-white" data-aos="fade-left" data-aos-delay="100">View Plans</a></li>
+                        <li><a href="contact.html" class="text-decoration-none text-white" data-aos="fade-left" data-aos-delay="100">Contact Us</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4 mb-3" data-aos="fade-left" data-aos-delay="100">
-                    <p class="display-6 text-white p-3">Follow Us</p>
+                    <p class="display-6 p-3 text-white">Follow Us</p>
                     <div class="d-flex gap-3" data-aos="fade-left" data-aos-delay="100">
                         <a href="#" class="text-white fs-4" data-aos="fade-left" data-aos-delay="100"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="text-white fs-4" data-aos="fade-left" data-aos-delay="100"><i class="bi bi-twitter"></i></a>
@@ -159,12 +161,12 @@
 <!--GetPlan Modal -->
 <div class="modal fade" id="getplanModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-4 text-center rounded-4 shadow-lg glass-effect">
+        <div class="modal-content p-4 rounded-4 shadow-lg text-center glass-effect">
             <!-- Close Button -->
-            <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close m-3 position-absolute end-0 top-0" data-bs-dismiss="modal" aria-label="Close"></button>
 
             <!-- Rupee Icon -->
-            <div class="icon-circle bg-light mx-auto">
+            <div class="bg-light icon-circle mx-auto">
                 <span class="rupee-icon">₹</span>
             </div>
 
@@ -174,7 +176,7 @@
 
             <!-- Mobile Number Input with Icon -->
             <div class="input-container">
-                <i class="fas fa-mobile-alt input-icon"></i>
+                <i class="input-icon fa-mobile-alt fas"></i>
                 <input type="text" id="phone2" class="form-control input-glow" placeholder="Mobile Number" maxlength="10">
             </div>
 
@@ -182,7 +184,7 @@
             <p id="error-message" class="text-danger mt-2" style="display: none; font-size: 14px;"></p>
 
             <!-- Continue Button -->
-            <button type="button" class="btn gradient-btn w-100 py-2 mt-4" id="continue">
+            <button type="button" class="btn w-100 gradient-btn mt-4 py-2" id="continue">
                 Continue
             </button>
         </div>
@@ -264,7 +266,6 @@ function openRechargeModal(button) {
     modal.show();
 }
 
-// ✅ Validate Mobile Number
 async function validateMobileNumberModal() {
     let mobileInput = document.getElementById("phone2");
     let errorText = document.getElementById("error-message");
@@ -292,26 +293,13 @@ async function validateMobileNumberModal() {
         const user = await response.json();
         console.log("✅ User data fetched:", user);
 
-        if (!user.userEmail) {
-            console.warn("⚠️ No email found for this user.");
-        }
-
-        // Ensure empty values are stored properly
         sessionStorage.setItem("mobileNumber", mobileNumber);
-        sessionStorage.setItem("userDetails", JSON.stringify({
-            userId: user.userId,
-            userName: user.userName,
-            userEmail: user.userEmail || "", // Default to empty string if missing
-            phoneNumber: user.phoneNumber,
-            dateOfBirth: user.dateOfBirth,
-            status: user.status,
-            addresses: user.addresses
-        }));
+        sessionStorage.setItem("userDetails", JSON.stringify(user));
 
-        console.log("📌 Stored in sessionStorage:", {
-            mobileNumber: sessionStorage.getItem("mobileNumber"),
-            userDetails: sessionStorage.getItem("userDetails")
-        });
+        // ✅ Ensure email is stored
+        if (user.email) {
+            sessionStorage.setItem("userEmail", user.email);
+        }
 
         errorText.style.display = "none";
         continueButton.disabled = false;
@@ -350,7 +338,8 @@ function setupPaymentButton() {
         }
     });
 }
-// ✅ Create Order API Request (Backend)
+
+// ✅ Create Order for Razorpay
 async function createOrder() {
     console.log("🔄 Creating Order with Backend...");
 
@@ -365,7 +354,8 @@ async function createOrder() {
 
     try {
         const response = await fetch(`http://localhost:8081/api/payment/create-order?amount=${selectedPlan.price}`, {
-            method: "POST"
+            method: "POST",
+            headers: { "Accept": "application/json" }
         });
 
         if (!response.ok) {
@@ -373,7 +363,10 @@ async function createOrder() {
             throw new Error(`❌ Request Failed: ${response.status} - ${errorText}`);
         }
 
-        return await response.json();
+        const orderData = await response.json();
+        console.log("✅ Order Created Successfully:", orderData);
+
+        return orderData;
     } catch (error) {
         console.error("❌ Order Creation Failed:", error.message);
         alert("Payment failed. Please try again.");
@@ -405,63 +398,99 @@ function startRazorpayPayment(orderData) {
     const rzp = new Razorpay(options);
     rzp.open();
 }
-// ✅ Handle Payment Success
-async function handlePaymentSuccess(orderId, paymentId) {
+async function handlePaymentSuccess(orderId, paymentId, retryCount = 3) {
     console.log("📡 Storing Recharge Details in Backend...");
+    console.log("🆔 Sent Payment ID:", paymentId);
 
     const mobileNumber = sessionStorage.getItem("mobileNumber");
     const selectedPlan = JSON.parse(sessionStorage.getItem("selectedPlan"));
-    const userDetails = JSON.parse(sessionStorage.getItem("userDetails"));
 
-    console.log("📩 User Details from Session:", userDetails); // Debugging
-    console.log("📦 Selected Plan from Session:", selectedPlan);
+    // ✅ Fetch user email from sessionStorage or userDetails
+    let userEmail = sessionStorage.getItem("userEmail");
+    if (!userEmail) {
+        const userDetails = JSON.parse(sessionStorage.getItem("userDetails"));
+        userEmail = userDetails?.email || userDetails?.userEmail || null;
+    }
 
-    if (!mobileNumber || !selectedPlan || !orderId) {
-        console.error("❌ Missing order details. Cannot store recharge history.");
-        alert("Error: Missing required details for recharge.");
+    // 🛑 Debugging Log: Print all values to ensure they exist
+    console.log("🔍 Debug: Retrieved Session Values - ", { 
+        orderId, 
+        paymentId, 
+        mobileNumber, 
+        selectedPlan, 
+        userEmail 
+    });
+
+    // ✅ Validate Required Details
+    if (!orderId || !paymentId || !mobileNumber || !selectedPlan || !userEmail) {
+        console.error("❌ Missing required details! Cannot store recharge history.");
+        alert("Error: Missing required details for recharge. Check console logs.");
         return;
     }
 
-    // Ensure plan name is correctly extracted
-    const planName = selectedPlan.planName || selectedPlan.name || "Unknown Plan";
-
-    const requestBody = {
-        transactionId: paymentId,
-        planId: selectedPlan.planId,
-        mobileNumber: mobileNumber,
-        amount: selectedPlan.price,
-        paymentMethod: "Razorpay",
-        status: "PAID"
-    };
-
     try {
-        const response = await fetch("http://localhost:8081/api/payment/verify-payment", {
+        let paymentDetails;
+        let attempt = 0;
+
+        // 🔄 Retry fetching payment details
+        while (attempt < retryCount) {
+            const response = await fetch(`http://localhost:8081/api/payment/details/${paymentId}`);
+
+            if (response.ok) {
+                paymentDetails = await response.json();
+                console.log("✅ Payment Details Fetched:", paymentDetails);
+                break;
+            } else {
+                console.warn(`⚠️ Attempt ${attempt + 1}: Failed to fetch payment details, retrying...`);
+                attempt++;
+                await new Promise(resolve => setTimeout(resolve, 3000)); // Wait 3 seconds before retrying
+            }
+        }
+
+        if (!paymentDetails) {
+            throw new Error("❌ Payment details could not be retrieved after multiple attempts.");
+        }
+
+        // ✅ Construct API request body
+        const requestBody = {
+            transactionId: paymentId,
+            planId: selectedPlan.planId,
+            mobileNumber: mobileNumber,
+            amount: selectedPlan.price,
+            paymentMethod: paymentDetails.method || "Unknown",
+            status: paymentDetails.status || "FAILED"
+        };
+
+        // ✅ Store recharge history in backend
+        const storeResponse = await fetch("http://localhost:8081/api/payment/verify-payment", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestBody)
         });
 
-        const responseData = await response.json();
-        if (!response.ok) {
-            throw new Error(`❌ API Error: ${response.status} - ${responseData?.message || "Unknown error"}`);
+        if (!storeResponse.ok) {
+            throw new Error(`❌ API Error: ${storeResponse.status} - ${(await storeResponse.json())?.message || "Unknown error"}`);
         }
 
-        console.log("✅ Recharge Data Stored Successfully:", responseData);
-        alert(responseData?.message || "Recharge Successful! Plan Activated.");
+        console.log("✅ Recharge Data Stored Successfully");
 
-        // Ensure email exists before sending confirmation
-        if (userDetails && userDetails.userEmail) {
-            sendEmailConfirmation(userDetails.userEmail, paymentId, mobileNumber, planName, selectedPlan.price, "Razorpay");
-        } else {
-            console.warn("⚠️ No email found, skipping email confirmation.");
-        }
+        // ✅ Send confirmation email
+        await sendEmailConfirmation(
+            userEmail,
+            paymentId,
+            mobileNumber,
+            selectedPlan.planName,
+            selectedPlan.price,
+            paymentDetails.method || "Unknown"
+        );
+
+        alert("Recharge Successful! Plan Activated.");
     } catch (error) {
         console.error("❌ Failed to Store Recharge Details:", error);
         alert("Recharge was not stored. Check console for details.");
     }
 }
+
 
 async function sendEmailConfirmation(userEmail, transactionId, mobileNumber, planName, amount, paymentMethod) {
     console.log("📩 Final Email Data:", {
@@ -540,6 +569,7 @@ async function sendEmailConfirmation(userEmail, transactionId, mobileNumber, pla
     }
 
 }
+
 
 
 

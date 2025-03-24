@@ -32,6 +32,6 @@ public class RechargeHistory {
     @Column(nullable = false)
     private LocalDateTime expiryDate; // Store expiry date
     
-    
+    private String status; // Status of the recharge
 
 }

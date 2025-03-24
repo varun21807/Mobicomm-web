@@ -30,7 +30,7 @@ public class Plan {
     private Long price;
 
     @Column(name = "validity")
-    private int validity;
+    private Integer validity;
 
     @Column(name = "data")
     private String data;
